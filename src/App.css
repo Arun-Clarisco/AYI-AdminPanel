@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap');
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-1: #1E3FCC;
+  --color-2: #1B3E8E;
+  --theme-text-1: #f8f8f8;
+  --primarycolor: #1d87ce;
+  --whitecolor: #ffffff;
+  --browncolor: #1f242f;
+  --lettercolor: #5f646e;
+  --blackcolor: black;
+  --background-color-1: #f1f2f4;
+  --border-color-1: #bbb;
+}
+
+@font-face {
+  font-family: poppins;
+  src: url(./Assets/font/poppins.medium.ttf);
+}
+
+body {
+  font-family: "poppins" !important;
+}
+
+::placeholder {
+  color: #61697a !important;
+  opacity: 1;
+  /* Firefox */
+}
+
+.input-form:focus {
+  box-shadow: none;
+  outline: none;
+  border-color: var(--border-color-1) !important;
+}
+
+.variable {
+  color: red !important;
+}
+
+.custom-right-nav-name-2 img {
+  width: 30%;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.calendor-form label {
+  font-size: 13px;
+}
+
+.rotate-icon {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.select-coin {
+  min-width: 130px;
+}
+
+.select-coin-1 {
+  min-width: 200px;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 15px;
+  top: 38px;
+}
+
+.password-toggle-icon-1 {
+  position: absolute;
+  right: 15px;
+  top: 30px;
+}
+
+/* .ck.ck-balloon-panel.ck-powered-by-balloon {
+  z-index: 9999 !important;
+}
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
+.ck.ck-balloon-panel,
+.ck.ck-tooltip {
+  z-index: 9999 !important;
+} */
+/* CKEditor dialogs inside modal – z-index fix */
+.ck.ck-balloon-panel,
+.ck.ck-tooltip,
+.ck.ck-link-form {
+  z-index: 9999 !important;
+}
+
+.modal-backdrop {
+  z-index: 1040 !important;
+}
