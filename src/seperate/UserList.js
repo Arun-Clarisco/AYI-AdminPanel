@@ -8,45 +8,24 @@ import DataTable from "react-data-table-component";
 import { makeApiRequest } from "../axiosService/ApiCall";
 import { Spinner } from "react-bootstrap";
 import { MdRefresh } from "react-icons/md";
-import {encryptData} from "../Auth/SecurityCrypto"
+import { encryptData } from "../Auth/SecurityCrypto"
 
 function UserList() {
   const [userData, setUserData] = useState([]);
-
-  // Search
   const [search, setSearch] = useState("");
-
-  // Register Date
   const [registerFromDate, setRegisterFromDate] = useState("");
   const [registerToDate, setRegisterToDate] = useState("");
-
-  // Login Date
   const [loginFromDate, setLoginFromDate] = useState("");
   const [loginToDate, setLoginToDate] = useState("");
-
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
-
-  // Loading
   const [loading, setLoading] = useState(false);
-
-  // Refresh
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [is_Refreshing, setIs_Refreshing] = useState(false);
-
-  // Pagination Reset
-  const [resetPaginationToggle, setResetPaginationToggle] =
-    useState(false);
-
-  // Calendar
-  const [showRegisterCalendar, setShowRegisterCalendar] =
-    useState(false);
-
-  const [showLoginCalendar, setShowLoginCalendar] =
-    useState(false);
-
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+  const [showRegisterCalendar, setShowRegisterCalendar] = useState(false);
+  const [showLoginCalendar, setShowLoginCalendar] = useState(false);
   const registerCalendarRef = useRef(null);
   const loginCalendarRef = useRef(null);
 
@@ -68,23 +47,13 @@ function UserList() {
     },
   ]);
 
-  /* =========================================
-        CLOSE CALENDAR OUTSIDE CLICK
-  ========================================= */
-
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        registerCalendarRef.current &&
-        !registerCalendarRef.current.contains(event.target)
-      ) {
+      if (registerCalendarRef.current && !registerCalendarRef.current.contains(event.target)) {
         setShowRegisterCalendar(false);
       }
 
-      if (
-        loginCalendarRef.current &&
-        !loginCalendarRef.current.contains(event.target)
-      ) {
+      if (loginCalendarRef.current && !loginCalendarRef.current.contains(event.target)) {
         setShowLoginCalendar(false);
       }
     };
@@ -106,19 +75,6 @@ function UserList() {
     try {
       setLoading(true);
 
-      // let queryParams = new URLSearchParams({
-      //   search: search || "",
-
-      //   registerFromDate: registerFromDate || "",
-      //   registerToDate: registerToDate || "",
-
-      //   loginFromDate: loginFromDate || "",
-      //   loginToDate: loginToDate || "",
-
-      //   page: page,
-      //   limit: limit,
-      // }).toString();
-
       const encryptedData = encryptData({
         search,
         registerFromDate,
@@ -138,8 +94,6 @@ function UserList() {
       };
 
       const response = await makeApiRequest(params);
-      console.log({ response });
-
 
       if (response.status) {
         setUserData(response.getUserTblDetails || []);
@@ -161,15 +115,7 @@ function UserList() {
 
   useEffect(() => {
     getUserhistory(currentPage);
-  }, [
-    search,
-    registerFromDate,
-    registerToDate,
-    loginFromDate,
-    loginToDate,
-    currentPage,
-    limit,
-  ]);
+  }, [search,registerFromDate,registerToDate,loginFromDate,loginToDate,currentPage,limit]);
 
   /* =========================================
         RESET PAGINATION
@@ -187,28 +133,18 @@ function UserList() {
 
   const handleClearFilters = async () => {
     setIsRefreshing(true);
-
     setSearch("");
-
-    // Register
     setRegisterFromDate("");
     setRegisterToDate("");
-
-    // Login
     setLoginFromDate("");
     setLoginToDate("");
-
-    // Calendar
     setShowRegisterCalendar(false);
     setShowLoginCalendar(false);
-
     setCurrentPage(1);
     setLimit(10);
-
     setIs_Refreshing(!is_Refreshing);
 
     const start = Date.now();
-
     const elapsed = Date.now() - start;
 
     if (elapsed < 500) {
@@ -229,14 +165,9 @@ function UserList() {
       if (!date) return "--";
 
       const orgDate = new Date(date).toUTCString();
-
       const hours = new Date(date).getUTCHours();
-
       const amOrPm = hours >= 12 ? "PM" : "AM";
-
-      const formattedDate =
-        orgDate.split(",")[1].split("GMT")[0] + amOrPm;
-
+      const formattedDate = orgDate.split(",")[1].split("GMT")[0] + amOrPm;
       return formattedDate;
     } catch (e) {
       return "--";
@@ -249,19 +180,9 @@ function UserList() {
 
   const handleRegisterDateChange = (item) => {
     setRegisterRange([item.selection]);
-
-    const formatDate = (date) => {
-      return date.toLocaleDateString("en-CA");
-    };
-
-    setRegisterFromDate(
-      formatDate(item.selection.startDate)
-    );
-
-    setRegisterToDate(
-      formatDate(item.selection.endDate)
-    );
-
+    const formatDate = (date) => { return date.toLocaleDateString("en-CA");};
+    setRegisterFromDate( formatDate(item.selection.startDate));
+    setRegisterToDate(formatDate(item.selection.endDate));
     handleReset();
   };
 
@@ -275,15 +196,8 @@ function UserList() {
     const formatDate = (date) => {
       return date.toLocaleDateString("en-CA");
     };
-
-    setLoginFromDate(
-      formatDate(item.selection.startDate)
-    );
-
-    setLoginToDate(
-      formatDate(item.selection.endDate)
-    );
-
+    setLoginFromDate(formatDate(item.selection.startDate));
+    setLoginToDate(formatDate(item.selection.endDate));
     handleReset();
   };
 
@@ -565,12 +479,7 @@ function UserList() {
                   persistTableHead
                   paginationPerPage={limit}
                   paginationTotalRows={totalPages}
-                  paginationRowsPerPageOptions={[
-                    5,
-                    10,
-                    15,
-                    20,
-                  ]}
+                  paginationRowsPerPageOptions={[5,10,15,20]}
                   paginationResetDefaultPage={
                     resetPaginationToggle
                   }
