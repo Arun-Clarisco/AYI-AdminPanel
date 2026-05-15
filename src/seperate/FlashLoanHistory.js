@@ -10,6 +10,11 @@ import { Spinner } from "react-bootstrap";
 import { MdRefresh } from "react-icons/md";
 import { encryptData } from "../Auth/SecurityCrypto"
 import { set } from "date-fns";
+import { FaRegCopy } from "react-icons/fa";
+import { toast } from "react-toastify";
+import config from "../axiosService/Config";
+
+
 
 function FlashLoanHistory() {
     const [flashLoanHistory, setFlashLoanHistory] = useState([]);
@@ -257,11 +262,70 @@ function FlashLoanHistory() {
             width: "250px",
         },
 
+        // {
+        //     name: "Hash",
+        //     selector: (row) => row.tx_hash || "--",
+        //     sortable: true,
+        //     width: "250px",
+        // },
+
         {
             name: "Hash",
             selector: (row) => row.tx_hash || "--",
             sortable: true,
-            width: "250px",
+            width: "300px",
+            cell: (row) => {
+                if (!row?.tx_hash) return "--";
+
+                const explorerMap = {
+                    Ethereum: config.Ethereum,
+                    Arbitrum: config.Arbitrum,
+                    BNB: config.BNB,
+                    Polygon: config.Polygon,
+                };
+
+                const explorerUrl = explorerMap[row?.network];
+
+                const shortHash =
+                    row.tx_hash.length > 24
+                        ? `${row.tx_hash.slice(0, 24)}...`
+                        : row.tx_hash;
+
+                const handleCopy = () => {
+                    navigator.clipboard.writeText(row.tx_hash);
+                    toast.success("Hash copied");
+                };
+
+                return (
+                    <div className="d-flex align-items-center gap-2">
+                        {explorerUrl ? (
+                            <a
+                                href={`${explorerUrl}${row.tx_hash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    color: "#0d6efd",
+                                    textDecoration: "none",
+                                    fontWeight: "500",
+                                }}
+                            >
+                                {shortHash}
+                            </a>
+                        ) : (
+                            <span>{shortHash}</span>
+                        )}
+
+                        <FaRegCopy
+                            onClick={handleCopy}
+                            style={{
+                                cursor: "pointer",
+                                fontSize: "14px",
+                            }}
+                            title="Copy Hash"
+                        />
+                    </div>
+                );
+            },
         },
 
         {
@@ -326,10 +390,10 @@ function FlashLoanHistory() {
                                             onChange={(e) => { setNetwork(e.target.value); handleReset() }}
                                         >
                                             <option value="">All Networks</option>
-                                            <option value="ethereum">Ethereum</option>
-                                            <option value="polygon">Polygon</option>
-                                            <option value="bnb">BNB</option>
-                                            <option value="arbitrum">Arbitrum</option>
+                                            <option value="Ethereum">Ethereum</option>
+                                            <option value="Polygon">Polygon</option>
+                                            <option value="BNB">BNB</option>
+                                            <option value="Arbitrum">Arbitrum</option>
                                         </select>
                                     </div>
 
