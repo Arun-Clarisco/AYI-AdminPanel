@@ -9,6 +9,8 @@ import { BiSolidUserDetail } from "react-icons/bi";
 import { MdSwitchAccount } from "react-icons/md";
 import { GiTwoCoins } from "react-icons/gi";
 import UserList from "./UserList";
+import AdminSetting from "./AdminSetting";
+import FlashLoanHistory from "./FlashLoanHistory";
 import { MdNotificationImportant } from "react-icons/md";
 import { MdTransferWithinAStation } from "react-icons/md";
 import { GoGitPullRequest } from "react-icons/go";
@@ -18,7 +20,8 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { SiGnuprivacyguard } from "react-icons/si";
 import { Link } from "react-router-dom";
 import { FaHistory, FaTicketAlt } from "react-icons/fa";
-import { MdHistoryEdu } from "react-icons/md";
+import { MdHistoryEdu, MdAdminPanelSettings } from "react-icons/md";
+import { CgUserList } from "react-icons/cg";
 import { toast, ToastContainer } from "react-toastify";
 import { makeApiRequest } from "../axiosService/ApiCall";
 import { BsFilePerson } from "react-icons/bs";
@@ -128,11 +131,40 @@ function Dashboard({ pageName }) {
                             }`}
                           to="/dashboard/user-list"
                         >
-                          <MdHistoryEdu className="sidenav-icon-size-css " />{" "}
+                          <CgUserList className="sidenav-icon-size-css " />{" "}
                           User List
                         </Link>
                       </li>
+
+
+                      <li className="nav-item">
+                        <Link
+                          className={`nav-link component-tabs ${location.pathname === "/dashboard/admin-setting"
+                            ? "active"
+                            : ""
+                            }`}
+                          to="/dashboard/admin-setting"
+                        >
+                          <MdAdminPanelSettings className="sidenav-icon-size-css " />{" "}
+                          Admin Setting
+                        </Link>
+                      </li>
+
+
+                      <li className="nav-item">
+                        <Link
+                          className={`nav-link component-tabs ${location.pathname === "/dashboard/flashloan-history"
+                            ? "active"
+                            : ""
+                            }`}
+                          to="/dashboard/flashloan-history"
+                        >
+                          <MdHistoryEdu className="sidenav-icon-size-css " />{" "}
+                          FlashLoan History
+                        </Link>
+                      </li>
                     </ul>
+                    
                   </div>
                 </nav>
               </div>
@@ -142,6 +174,8 @@ function Dashboard({ pageName }) {
 
             <div className="dashboard-right-section">
               {location.pathname === "/dashboard/user-list" && <UserList />}
+              {location.pathname === "/dashboard/admin-setting" && <AdminSetting />}
+              {location.pathname === "/dashboard/flashloan-history" && <FlashLoanHistory />}
             </div>
           </div>
         </div>

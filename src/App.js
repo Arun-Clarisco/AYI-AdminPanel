@@ -29,6 +29,8 @@ function App() {
           <Route exact path="/resetpassword/:token" element={<Resetpassword />} />
           <Route exact path="/register" element={<Register />} />
           <Route path="/dashboard/user-list" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard/admin-setting" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard/flashloan-history" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         </Routes>
 
       </BrowserRouter>

@@ -17,7 +17,7 @@ function Resetpassword() {
   useEffect(() => {
     const token = localStorage.getItem("AdminCredentials");
     if (token) {
-      navigate("/dashboard/admin-transfer");
+      navigate("/dashboard/user-list");
     }
     //setToken(token);
   }, [token]);
@@ -28,10 +28,6 @@ function Resetpassword() {
 
   const toggleConfirmPassword = () => {
     setConfirmPassword(!confirmPassword);
-  };
-
-  const handleSubmit = () => {
-    navigate("/dashboard/analytics");
   };
 
   const formik = useFormik({

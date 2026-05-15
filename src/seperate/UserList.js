@@ -115,7 +115,7 @@ function UserList() {
 
   useEffect(() => {
     getUserhistory(currentPage);
-  }, [search,registerFromDate,registerToDate,loginFromDate,loginToDate,currentPage,limit]);
+  }, [search,registerFromDate,registerToDate,loginFromDate,loginToDate,currentPage,limit,]);
 
   /* =========================================
         RESET PAGINATION

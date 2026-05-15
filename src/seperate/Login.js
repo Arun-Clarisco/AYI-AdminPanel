@@ -16,9 +16,6 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [copyright, setCopyright] = useState("");
-  // const handleSubmit = () => {
-  //     navigate("/dashboard/analytics")
-  // }
 
   const toggleOldPasswordVisibility = () => {
     setShowPassword(!showPassword);

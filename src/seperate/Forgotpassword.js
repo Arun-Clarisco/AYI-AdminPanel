@@ -10,20 +10,15 @@ import AYILogo from "../Assets/images/Ayi_logo.png";
 function Forgotpassword() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [copyright, setCopyright] = useState("");
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-      const token = localStorage.getItem("AdminCredentials");
-      if (token) {
-          navigate("/dashboard/admin-transfer");
-      }
-      setToken(token)
+    const token = localStorage.getItem("AdminCredentials");
+    if (token) {
+      navigate("/dashboard/user-list");
+    }
+    setToken(token)
   }, [token])
-
-  const handleSubmit = () => {
-    navigate("/dashboard/analytics");
-  };
 
   const formik = useFormik({
     initialValues: {
@@ -61,25 +56,8 @@ function Forgotpassword() {
       }
     },
   });
-  // copyrightsdata fetch ...........
-  useEffect(() => {
-    // copyrightData();
-  }, []);
-  const copyrightData = async (req, res) => {
-    try {
-      const params = {
-        url: "get-CopyrightsData",
-        method: "GET",
-      };
-      const copyrightData = await makeApiRequest(params);
-      // console.log("copyrightData--", copyrightData);
-      if (copyrightData.status == true) {
-        setCopyright(copyrightData.data[0].copyright);
-      }
-    } catch (err) {
-      toast.error(copyrightData.message);
-    }
-  };
+
+
   return (
     <div className="App">
       <ToastContainer />
@@ -136,9 +114,6 @@ function Forgotpassword() {
                           Submit
                         </button>
                       )}
-                      <div className="text-center">
-                        {copyright}
-                      </div>
                     </div>
                   </form>
                 </div>
