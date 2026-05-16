@@ -7,18 +7,30 @@ if (environment == "local") {
     adminBackendUrl: "http://localhost:3005/ayi/admin/",
     backendurl: "http://localhost:3005/",
     SECURITY_KEY: "lDjIOueR98239842",
+    Ethereum: 'https://etherscan.io/tx/',
+    Arbitrum: 'https://arbiscan.io/tx/',
+    BNB: 'https://bscscan.com/tx/',
+    Polygon: 'https://polygonscan.com/tx/',
   };
 } else if (environment == "staging") {
   config = {
     adminBackendUrl: "http://localhost:3005/ayi/admin/",
     backendurl: "http://localhost:3005/",
     SECURITY_KEY: "lDjIOueR98239842",
+    Ethereum: 'https://etherscan.io/tx/',
+    Arbitrum: 'https://arbiscan.io/tx/',
+    BNB: 'https://bscscan.com/tx/',
+    Polygon: 'https://polygonscan.com/tx/',
   };
 } else {
   config = {
     adminBackendUrl: "http://localhost:3005/ayi/admin/",
     backendurl: "http://localhost:3005/",
     SECURITY_KEY: "lDjIOueR98239842",
+    Ethereum: 'https://etherscan.io/tx/',
+    Arbitrum: 'https://arbiscan.io/tx/',
+    BNB: 'https://bscscan.com/tx/',
+    Polygon: 'https://polygonscan.com/tx/',
   };
 }
 

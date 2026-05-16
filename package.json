@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
-    "@ckeditor/ckeditor5-font": "^41.4.2",
-    "@ckeditor/ckeditor5-react": "^6.3.0",
     "@craco/craco": "^7.1.0",
     "@emurgo/cardano-serialization-lib-browser": "^14.1.2",
     "@fullcalendar/daygrid": "^6.1.15",
@@ -26,7 +23,6 @@
     "crypto-browserify": "^3.12.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^2.30.0",
-    "ecpair": "^3.0.0",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
     "install": "^0.13.0",
