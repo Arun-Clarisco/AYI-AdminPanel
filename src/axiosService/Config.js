@@ -4,8 +4,8 @@ let config = {};
 let environment = "local";
 if (environment == "local") {
   config = {
-    adminBackendUrl: "http://localhost:3005/ayi/admin/",
-    backendurl: "http://localhost:3005/",
+    adminBackendUrl: "http://localhost:3012/ayi/admin/",
+    backendurl: "http://localhost:3012/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',
@@ -14,8 +14,8 @@ if (environment == "local") {
   };
 } else if (environment == "staging") {
   config = {
-    adminBackendUrl: "http://localhost:3005/ayi/admin/",
-    backendurl: "http://localhost:3005/",
+    adminBackendUrl: "http://localhost:3012/ayi/admin/",
+    backendurl: "http://localhost:3012/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',
@@ -24,8 +24,8 @@ if (environment == "local") {
   };
 } else {
   config = {
-    adminBackendUrl: "http://localhost:3005/ayi/admin/",
-    backendurl: "http://localhost:3005/",
+    adminBackendUrl: "http://localhost:3012/ayi/admin/",
+    backendurl: "http://localhost:3012/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',
