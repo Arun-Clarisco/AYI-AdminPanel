@@ -65,15 +65,37 @@ function AdminSetting() {
     }
   };
 
-  const handleNetworkChange = (value) => {
+  const handleNetworkChange = async (value) => {
     setNetwork(value);
 
     const existing = networkFees.find(
       (item) => item.network === value
     );
 
+    console.log(existing, "existing")
+
     if (existing) {
-      setAdminFee(existing.adminFee);
+      try {
+        const provider = new ethers.JsonRpcProvider(
+          value === 'Ethereum'
+            ? config.RPC.Ethereum
+            : value === 'Arbitrum'
+              ? config.RPC.Arbitrum
+              : value === 'BNB'
+                ? config.RPC.BNB
+                : config.RPC.Polygon
+        );
+        const contract = config.FlashLoanContract[value.toString()];
+        console.log(contract)
+        const flashLoanContract = new ethers.Contract(contract, flashLoanAbi, provider);
+        const fee = await flashLoanContract.fee();
+        const feeEther = ethers.formatUnits(fee, 18);
+        console.log(feeEther)
+        setAdminFee(feeEther == existing.adminFee ? feeEther : "");
+      } catch (error) {
+        console.log(error)
+        setAdminFee("");
+      }
     } else {
       setAdminFee("");
     }
@@ -107,12 +129,12 @@ function AdminSetting() {
         const res = await makeApiRequest(params);
         if (res.status) {
           toast.success(res.message || "Admin settings updated successfully");
-        // Update local state with new settings
-        const updatedNetworkFees = networkFees.filter(
-          (item) => item.network !== network
-        );
-        updatedNetworkFees.push({ network, adminFee });
-        setNetworkFees(updatedNetworkFees);
+          // Update local state with new settings
+          const updatedNetworkFees = networkFees.filter(
+            (item) => item.network !== network
+          );
+          updatedNetworkFees.push({ network, adminFee });
+          setNetworkFees(updatedNetworkFees);
         } else {
           toast.error(res.message || "Failed to update settings");
         }
