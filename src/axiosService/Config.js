@@ -1,11 +1,10 @@
 import * as bitcoin from "bitcoinjs-lib";
 
 let config = {};
-let environment = "local";
+let environment = "staging";
 if (environment == "local") {
   config = {
     adminBackendUrl: "http://localhost:3005/ayi/admin/",
-    backendurl: "http://localhost:3005/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',
@@ -14,8 +13,7 @@ if (environment == "local") {
   };
 } else if (environment == "staging") {
   config = {
-    adminBackendUrl: "http://localhost:3005/ayi/admin/",
-    backendurl: "http://localhost:3005/",
+    adminBackendUrl: "http://staging.api.ayibot92.tech/ayi/admin/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',
@@ -25,7 +23,6 @@ if (environment == "local") {
 } else {
   config = {
     adminBackendUrl: "http://localhost:3005/ayi/admin/",
-    backendurl: "http://localhost:3005/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',

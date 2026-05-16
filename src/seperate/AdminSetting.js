@@ -4,7 +4,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { encryptData } from "../Auth/SecurityCrypto"
+import { encryptData } from "../Auth/SecurityCrypto";
+import { useAccount, useSwitchChain } from 'wagmi';
+
 
 
 import axios from "axios";
@@ -12,11 +14,31 @@ import axios from "axios";
 function AdminSetting() {
   const [loading, setLoading] = useState(false);
   const [adminFee, setAdminFee] = useState("");
-  const [network, setNetwork] = useState("");
+  const [network, setNetwork] = useState("Ethereum");
+  const { chain } = useAccount();
+  const { chains, switchChain } = useSwitchChain();
 
   useEffect(() => {
     fetchSiteSettings();
   }, []);
+
+  const networkMap = {
+    Ethereum: "Ethereum",
+    BNB: "BNB Smart Chain",
+    Polygon: "Polygon",
+    Arbitrum: "Arbitrum One",
+  };
+
+
+  useEffect(() => {
+    console.log(chain?.name, network)
+    if (chain?.id && network) {
+      const expectedChainName = networkMap[network];
+      if (chain?.name != expectedChainName) {
+        switchChain?.({ chainId: network == "Ethereum" ? chains[0].id : network == "BNB" ? chains[1].id : network == "Polygon" ? chains[2].id : chains[3].id });
+      }
+    }
+  }, [chain?.id, network])
 
   const fetchSiteSettings = async () => {
     try {
@@ -98,13 +120,16 @@ function AdminSetting() {
                                 <select
                                   className="form-select"
                                   value={network}
-                                  onChange={(e) => setNetwork(e.target.value)}
+                                  onChange={(e) => {
+                                    setNetwork(e.target.value);
+                                    switchChain?.({ chainId: e.target.value == "Ethereum" ? chains[0].id : e.target.value == "BNB" ? chains[1].id : e.target.value == "Polygon" ? chains[2].id : chains[3].id })
+                                  }}
                                 >
                                   <option value="">Select Network</option>
-                                  <option value="ethereum">Ethereum</option>
-                                  <option value="polygon">Polygon</option>
-                                  <option value="bnb">BNB</option>
-                                  <option value="arbitrum">Arbitrum</option>
+                                  <option value="Ethereum">Ethereum</option>
+                                  <option value="Polygon">Polygon</option>
+                                  <option value="BNB">BNB</option>
+                                  <option value="Arbitrum">Arbitrum</option>
                                 </select>
                               </div>
                             </div>
