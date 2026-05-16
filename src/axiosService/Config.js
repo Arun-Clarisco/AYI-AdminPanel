@@ -27,7 +27,7 @@ if (environment == "local") {
   };
 } else if (environment == "staging") {
   config = {
-    adminBackendUrl: "http://staging.api.ayibot92.tech/ayi/admin/",
+    adminBackendUrl: "https://staging.api.ayibot92.tech/ayi/admin/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',
@@ -73,7 +73,7 @@ if (environment == "local") {
       BNB: 'https://bsc-dataseed.binance.org/',
       Polygon: 'https://polygon.drpc.org/',
     },
-    
+
   };
 }
 

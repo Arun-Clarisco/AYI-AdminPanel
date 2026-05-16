@@ -18,7 +18,8 @@ import axios from "axios";
 function AdminSetting() {
   const [loading, setLoading] = useState(false);
   const [adminFee, setAdminFee] = useState("");
-  const [network, setNetwork] = useState("Ethereum");
+  const [network, setNetwork] = useState("");
+  const [networkFees, setNetworkFees] = useState([]);
   const { chain } = useAccount();
   const { chains, switchChain } = useSwitchChain();
   const { address, isConnected } = useAccount();
@@ -57,12 +58,24 @@ function AdminSetting() {
       const res = await makeApiRequest(params);
 
       if (res.status && res.data) {
-        const data = res.data;
-        setAdminFee(data.adminFee || "");
-        // setNetwork(data.network || "");
+        setNetworkFees(res.data.networkFees || []);
       }
     } catch (err) {
       console.log("Failed to fetch site settings");
+    }
+  };
+
+  const handleNetworkChange = (value) => {
+    setNetwork(value);
+
+    const existing = networkFees.find(
+      (item) => item.network === value
+    );
+
+    if (existing) {
+      setAdminFee(existing.adminFee);
+    } else {
+      setAdminFee("");
     }
   };
 
@@ -94,6 +107,12 @@ function AdminSetting() {
         const res = await makeApiRequest(params);
         if (res.status) {
           toast.success(res.message || "Admin settings updated successfully");
+        // Update local state with new settings
+        const updatedNetworkFees = networkFees.filter(
+          (item) => item.network !== network
+        );
+        updatedNetworkFees.push({ network, adminFee });
+        setNetworkFees(updatedNetworkFees);
         } else {
           toast.error(res.message || "Failed to update settings");
         }
@@ -176,13 +195,25 @@ function AdminSetting() {
                             <div className="mb-3">
                               <div className="mt-3">
                                 <label className="form-label">Network</label>
-                                <select
+                                {/* <select
                                   className="form-select"
                                   value={network}
                                   onChange={(e) => {
                                     setNetwork(e.target.value);
                                     switchChain?.({ chainId: e.target.value == "Ethereum" ? chains[0].id : e.target.value == "BNB" ? chains[1].id : e.target.value == "Polygon" ? chains[2].id : chains[3].id })
                                   }}
+                                >
+                                  <option value="">Select Network</option>
+                                  <option value="ethereum">Ethereum</option>
+                                  <option value="polygon">Polygon</option>
+                                  <option value="bnb">BNB</option>
+                                  <option value="arbitrum">Arbitrum</option>
+                                </select> */}
+
+                                <select
+                                  className="form-select"
+                                  value={network}
+                                  onChange={(e) => handleNetworkChange(e.target.value)}
                                 >
                                   <option value="Ethereum">Ethereum</option>
                                   <option value="Polygon">Polygon</option>
@@ -206,10 +237,6 @@ function AdminSetting() {
                                   const val = e.target.value;
                                   if (/^\d*$/.test(val)) setAdminFee(val);
                                 }}
-                                // disabled={
-                                //   siteSettingEdit == 0 &&
-                                //   adminType == "SubAdmin"
-                                // }
                                 placeholder="e.g. 5"
                               />
                             </div>
