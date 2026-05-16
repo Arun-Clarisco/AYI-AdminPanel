@@ -9,6 +9,21 @@ if (environment == "local") {
     Arbitrum: 'https://arbiscan.io/tx/',
     BNB: 'https://bscscan.com/tx/',
     Polygon: 'https://polygonscan.com/tx/',
+
+    FlashLoanContract: {
+      Ethereum: "",
+      BNB: "0x85B0040DcB5BfBd7614a21934597698bb48F67A5",
+      Polygon: "",
+      Arbitrum: ""
+    },
+
+    RPC: {
+      Sepolia: "https://eth-sepolia-testnet.api.pocket.network",
+      Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
+      Arbitrum: 'https://arb1.arbitrum.io/rpc',
+      BNB: 'https://bsc-dataseed.binance.org/',
+      Polygon: 'https://polygon.drpc.org/',
+    },
   };
 } else if (environment == "staging") {
   config = {
@@ -18,6 +33,22 @@ if (environment == "local") {
     Arbitrum: 'https://arbiscan.io/tx/',
     BNB: 'https://bscscan.com/tx/',
     Polygon: 'https://polygonscan.com/tx/',
+
+        FlashLoanContract: {
+      Ethereum: "",
+      BNB: "0x85B0040DcB5BfBd7614a21934597698bb48F67A5",
+      Polygon: "",
+      Arbitrum: ""
+    },
+
+    RPC: {
+      Sepolia: "https://eth-sepolia-testnet.api.pocket.network",
+      Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
+      Arbitrum: 'https://arb1.arbitrum.io/rpc',
+      BNB: 'https://bsc-dataseed.binance.org/',
+      Polygon: 'https://polygon.drpc.org/',
+    },
+
   };
 } else {
   config = {
@@ -27,6 +58,22 @@ if (environment == "local") {
     Arbitrum: 'https://arbiscan.io/tx/',
     BNB: 'https://bscscan.com/tx/',
     Polygon: 'https://polygonscan.com/tx/',
+
+        FlashLoanContract: {
+      Ethereum: "",
+      BNB: "0x85B0040DcB5BfBd7614a21934597698bb48F67A5",
+      Polygon: "",
+      Arbitrum: ""
+    },
+
+    RPC: {
+      Sepolia: "https://eth-sepolia-testnet.api.pocket.network",
+      Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
+      Arbitrum: 'https://arb1.arbitrum.io/rpc',
+      BNB: 'https://bsc-dataseed.binance.org/',
+      Polygon: 'https://polygon.drpc.org/',
+    },
+    
   };
 }
 

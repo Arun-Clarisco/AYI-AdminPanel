@@ -5,7 +5,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { encryptData } from "../Auth/SecurityCrypto";
-import { useAccount, useSwitchChain } from 'wagmi';
+import { useAccount, useConfig, useSwitchChain } from 'wagmi';
+import { ethers } from "ethers";
+import config from "../axiosService/Config";
+import flashLoanAbi from "../ABI/flashLoanAbi.json";
+import { waitForTransactionReceipt, writeContract, estimateGas } from '@wagmi/core';
 
 
 
@@ -17,6 +21,8 @@ function AdminSetting() {
   const [network, setNetwork] = useState("Ethereum");
   const { chain } = useAccount();
   const { chains, switchChain } = useSwitchChain();
+  const { address, isConnected } = useAccount();
+  const configs = useConfig()
 
   useEffect(() => {
     fetchSiteSettings();
@@ -34,11 +40,12 @@ function AdminSetting() {
     console.log(chain?.name, network)
     if (chain?.id && network) {
       const expectedChainName = networkMap[network];
+      console.log(expectedChainName)
       if (chain?.name != expectedChainName) {
         switchChain?.({ chainId: network == "Ethereum" ? chains[0].id : network == "BNB" ? chains[1].id : network == "Polygon" ? chains[2].id : chains[3].id });
       }
     }
-  }, [chain?.id, network])
+  }, [network])
 
   const fetchSiteSettings = async () => {
     try {
@@ -52,7 +59,7 @@ function AdminSetting() {
       if (res.status && res.data) {
         const data = res.data;
         setAdminFee(data.adminFee || "");
-        setNetwork(data.network || "");
+        // setNetwork(data.network || "");
       }
     } catch (err) {
       console.log("Failed to fetch site settings");
@@ -66,36 +73,88 @@ function AdminSetting() {
       return;
     }
 
-    const address = await axios.get("https://api.ipify.org/?format=json");
-    const lastloginIpAddress = address.data.ip;
-
     setLoading(true);
 
-    try {
-      const encryptedData = encryptData({
-        network,
-        adminFee,
-      });
-      const params = {
-        url: "admin-setting",
-        method: "POST",
-        data: {
-          data: encryptedData,
-        },
-      };
+    const contractStatus = await handleChangeFee(adminFee);
+    if (contractStatus) {
 
-      const res = await makeApiRequest(params);
-      if (res.status) {
-        toast.success(res.message || "Admin settings updated successfully");
-      } else {
-        toast.error(res.message || "Failed to update settings");
+      try {
+        const encryptedData = encryptData({
+          network,
+          adminFee,
+        });
+        const params = {
+          url: "admin-setting",
+          method: "POST",
+          data: {
+            data: encryptedData,
+          },
+        };
+
+        const res = await makeApiRequest(params);
+        if (res.status) {
+          toast.success(res.message || "Admin settings updated successfully");
+        } else {
+          toast.error(res.message || "Failed to update settings");
+        }
+      } catch (err) {
+        console.log("Error updating admin settings", err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.log("Error updating admin settings", err);
-    } finally {
+    } else {
+      toast.error("Failed to update settings")
       setLoading(false);
     }
   };
+
+  const handleChangeFee = async (fee) => {
+    try {
+      if (isConnected) {
+        const provider = new ethers.JsonRpcProvider(
+          network === 'Ethereum'
+            ? config.RPC.Ethereum
+            : network === 'Arbitrum'
+              ? config.RPC.Arbitrum
+              : network === 'BNB'
+                ? config.RPC.BNB
+                : config.RPC.Polygon
+        );
+        const contract = config.FlashLoanContract[network.toString()];
+        const flashLoanContract = new ethers.Contract(contract, flashLoanAbi, provider);
+        const adminAddress = await flashLoanContract.admin();
+        console.log(adminAddress, "adminaddress")
+        if (adminAddress != address) {
+          toast.error("You are not a admin!")
+          setLoading(false);
+        }
+        console.log(fee)
+
+        const feeWei = ethers.parseEther(fee.toString());
+        console.log(feeWei)
+
+        const hash = await writeContract(configs, {
+          address: contract,
+          abi: flashLoanAbi,
+          functionName: 'changefee',
+          args: [feeWei],
+        });
+
+        let transactionReceipt = await waitForTransactionReceipt(configs, {
+          hash: hash,
+        })
+
+        return true;
+
+      } else {
+        toast.warn("Please connect your wallet!")
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log("Getting error on change fee", error)
+      setLoading(false);
+    }
+  }
 
   return (
     <>
@@ -125,7 +184,6 @@ function AdminSetting() {
                                     switchChain?.({ chainId: e.target.value == "Ethereum" ? chains[0].id : e.target.value == "BNB" ? chains[1].id : e.target.value == "Polygon" ? chains[2].id : chains[3].id })
                                   }}
                                 >
-                                  <option value="">Select Network</option>
                                   <option value="Ethereum">Ethereum</option>
                                   <option value="Polygon">Polygon</option>
                                   <option value="BNB">BNB</option>
