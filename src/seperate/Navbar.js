@@ -4,10 +4,17 @@ import { IoMdLogOut } from "react-icons/io";
 import { Modal, Button, Dropdown } from "react-bootstrap";
 import { makeApiRequest } from "../axiosService/ApiCall";
 import AYILogo from "../Assets/images/Ayi_logo.png";
+import { useAccount, useConfig, useConnect, useDisconnect } from 'wagmi';
+import { Wallet } from "react-bootstrap-icons";
+
+
 function Navbar() {
   const [adminType, setAdminType] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [adminName, setAdminName] = useState("");
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { address, isConnected } = useAccount();
 
   const handleLogout = () => {
     localStorage.clear();
@@ -62,7 +69,62 @@ function Navbar() {
             </a>
 
             {/* Admin Type / Name with Dropdown */}
-            <div className="d-flex align-items-center">
+            <div className="d-flex gap-3 align-items-center">
+              {!isConnected ?
+                <button
+                  className="custom-nav-button-1 d-flex align-items-center"
+                  onClick={() => connect({ connector: connectors[0] })}
+                  style={{
+                    backgroundColor: "white",
+                    color: "black",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                    border: "none",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                  }}
+                >
+                  <Wallet style={{ marginRight: "8px" }} />
+                  Connect Wallet
+                </button>
+                :
+                <button
+                  className="custom-nav-button-1 d-flex align-items-center"
+                  style={{
+                    backgroundColor: "white",
+                    color: "black",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                    border: "none",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                  }}
+                >
+                  <Wallet style={{ marginRight: "8px" }} />
+                  {address.substring(0, 5) + "..." + address.substring(address.length - 4)}
+                </button>
+              }
+
+              {isConnected ? 
+              <button
+                  className="custom-nav-button-1 d-flex align-items-center"
+                  onClick={() => disconnect()}
+                  style={{
+                    backgroundColor: "white",
+                    color: "black",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                    border: "none",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                  }}
+                >
+                  Disconnect
+                </button>
+                : 
+                <></>
+                }
+
               <button
                 className="custom-nav-button-1 d-flex align-items-center"
                 onClick={() => setShowModal(true)}
