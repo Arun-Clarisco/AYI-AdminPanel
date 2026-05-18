@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Assuming you're using react-icons
+import { Link } from 'react-router-dom';
 
 function Register() {
 
@@ -44,7 +45,7 @@ function Register() {
                                             <button type="submit" className=" w-40 custom-main-button">Submit</button>
                                         </div>
                                         <div className='d-flex justify-content-between mt-3'>
-                                            <p><a href='forgot-password' className='custom-a-1'>Forgot Password</a></p>
+                                            <p><Link to='/forgot-password' className='custom-a-1'>Forgot Password</Link></p>
                                             <p>Login</p>
                                         </div>
                                     </form>

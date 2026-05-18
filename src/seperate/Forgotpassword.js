@@ -78,12 +78,12 @@ function Forgotpassword() {
           <div className="row min-vh-100 align-items-center justify-content-center">
             <div className="col-lg-5">
               <div className="custom-inside-log-in">
-                <a
+                <Link
                   className="navbar-brand custom-right-nav-name-2"
-                  href="/"
+                  to="/"
                 >
                   <img src={AYILogo} alt="Logo" />
-                </a>
+                </Link>
                 <h6 className="fw-bold">Forget Password</h6>
                 <div className="custom-form">
                   <form onSubmit={formik.handleSubmit}>

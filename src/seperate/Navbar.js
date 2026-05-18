@@ -7,6 +7,7 @@ import AYILogo from "../Assets/images/Ayi_logo.png";
 import { useAccount, useConfig, useConnect, useDisconnect } from 'wagmi';
 import { Wallet } from "react-bootstrap-icons";
 import { encryptData, decryptData } from "../Auth/SecurityCrypto"
+import { Link } from "react-router-dom";
 
 
 
@@ -65,15 +66,15 @@ function Navbar() {
           <div className="container-fluid d-flex justify-content-between align-items-center">
 
             {/* Logo */}
-            <a
+            <Link
               className="navbar-brand custom-right-nav-name-1"
-              href="/dashboard/admin-transfer"
+              to="/dashboard/admin-transfer"
             >
               <img
                 src={AYILogo}
                 alt="Logo"
               />
-            </a>
+            </Link>
 
             {/* Admin Type / Name with Dropdown */}
             <div className="d-flex gap-3 align-items-center">

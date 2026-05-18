@@ -141,9 +141,9 @@ function Login() {
           <div className="row min-vh-100 align-items-center justify-content-center">
             <div className="col-lg-5">
               <div className="custom-inside-log-in">
-                <a className="navbar-brand custom-right-nav-name-2" href="/">
+                <Link className="navbar-brand custom-right-nav-name-2" to="/">
                   <img src={AYILogo} alt="logo" />
-                </a>
+                </Link>
                 <h6 className="fw-bold">Sign In to Application</h6>
                 <div className="custom-form">
                   <form onSubmit={formik.handleSubmit}>

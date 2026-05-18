@@ -22,7 +22,7 @@ const config = createConfig({
     [polygon.id]: http(),
     [arbitrum.id]: http(),
   },
-   connectors: [
+  connectors: [
     metaMask(),
   ],
 })
@@ -30,10 +30,10 @@ const config = createConfig({
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-     <WagmiProvider config={config}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-    <App />
-     </QueryClientProvider>
+        <App />
+      </QueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>
 );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -71,7 +71,7 @@ function Resetpassword() {
             toast.warn(decryptRes.message);
             localStorage.clear();
           }
-        }else{
+        } else {
           toast.error(response.message);
         }
 
@@ -90,9 +90,9 @@ function Resetpassword() {
           <div className="row min-vh-100 align-items-center justify-content-center">
             <div className="col-lg-5">
               <div className="custom-inside-log-in">
-                <a class="navbar-brand custom-right-nav-name-2" href="/">
+                <Link class="navbar-brand custom-right-nav-name-2" to="/">
                   <img src={AYILogo} alt="logo" />
-                </a>
+                </Link>
                 <h6 className="fw-bold">Reset Password</h6>
                 <div className="custom-form">
                   <form onSubmit={formik.handleSubmit}>
