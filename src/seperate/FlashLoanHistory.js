@@ -208,28 +208,28 @@ function FlashLoanHistory() {
             name: "Network",
             selector: (row) => row.network || "--",
             sortable: true,
-            width: "250px",
+            width: "120px",
         },
 
         {
             name: "Provider",
             selector: (row) => row.provider || "--",
             sortable: true,
-            width: "250px",
+            width: "120px",
         },
 
         {
             name: "Asset",
             selector: (row) => row.asset || "--",
             sortable: true,
-            width: "250px",
+            width: "120px",
         },
 
         {
             name: "Borrowed Amount",
             selector: (row) => row.borrowed_amount_usd || "--",
             sortable: true,
-            width: "250px",
+            width: "180px",
         },
 
         {
@@ -250,21 +250,21 @@ function FlashLoanHistory() {
             name: "Pair",
             selector: (row) => row.pair || "--",
             sortable: true,
-            width: "250px",
+            width: "120px",
         },
 
         {
             name: "Buy Dex",
             selector: (row) => row.buy_dex || "--",
             sortable: true,
-            width: "250px",
+            width: "120px",
         },
 
         {
             name: "Sell Dex",
             selector: (row) => row.sell_dex || "--",
             sortable: true,
-            width: "250px",
+            width: "120px",
         },
 
         // {
@@ -337,7 +337,7 @@ function FlashLoanHistory() {
             name: "Status",
             selector: (row) => row.status || "--",
             sortable: true,
-            width: "250px",
+            width: "150px",
         },
 
         {
@@ -360,10 +360,6 @@ function FlashLoanHistory() {
                                     Flash Loan History
                                 </h3>
                             </div>
-
-                            {/* =========================================
-                    FILTER SECTION
-              ========================================= */}
 
                             <div className="d-flex calendor-form align-items-end">
                                 <form className="d-flex gap-lg-2 align-items-end flex-wrap">
@@ -515,9 +511,6 @@ function FlashLoanHistory() {
                                 </form>
                             </div>
 
-                            {/* =========================================
-                    TABLE
-              ========================================= */}
 
                             <div className="liquidity-table-1">
                                 <DataTable

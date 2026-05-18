@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { makeApiRequest } from "../axiosService/ApiCall";
@@ -108,21 +108,21 @@ function Forgotpassword() {
                     </div>
                     <div className="d-flex justify-content-between mt-3">
                       <p>
-                        <a href="/" className="text-dark">
+                        <Link to="/" className="text-dark">
                           Back to Login Page
-                        </a>
+                        </Link>
                       </p>
                     </div>
                     <div className="w-100">
                       {isLoading ? (
                         <button
-                          className="d-send-btn-1 rounded-pill custom-main-button w-40"
+                          className="d-send-btn-1 rounded-pill custom-main-button w-100"
                           type="button"
                         >
                           <Spinner animation="border" />
                         </button>
                       ) : (
-                        <button className=" w-40 custom-main-button">
+                        <button className=" w-100 custom-main-button">
                           Submit
                         </button>
                       )}

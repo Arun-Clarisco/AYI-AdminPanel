@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../Assets/css/style.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { makeApiRequest } from "../axiosService/ApiCall";
@@ -203,10 +203,10 @@ function Login() {
                       <label class="form-check-label" for="exampleCheck1">Remember Password</label>
                     </div> */}
 
-                    <div className="w-100">
+                    <div className="w-100 mt-4">
                       {isLoading ? (
                         <button
-                          className="d-send-btn-1 rounded-pill custom-main-button w-40"
+                          className="d-send-btn-1 rounded-pill custom-main-button w-100"
                           type="button"
                         >
                           <Spinner animation="border" />
@@ -214,7 +214,7 @@ function Login() {
                       ) : (
                         <button
                           type="submit"
-                          className="custom-main-button w-40"
+                          className="custom-main-button w-100"
                         >
                           Submit
                         </button>
@@ -223,9 +223,9 @@ function Login() {
 
                     <div className="d-flex justify-content-between mt-3">
                       <p>
-                        <a href="/forgot-password" className="text-dark">
+                        <Link to="/forgot-password" className="text-dark">
                           Forgot Password
-                        </a>
+                        </Link>
                       </p>
                       {/* <a href='/register'><p>Register</p></a> */}
                     </div>
