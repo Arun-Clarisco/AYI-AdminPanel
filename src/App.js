@@ -7,6 +7,7 @@ import Forgotpassword from './seperate/Forgotpassword';
 import Resetpassword from './seperate/Resetpassword';
 import Register from './seperate/Register';
 import ProtectedRoute from './Auth/ProtectRoute';
+import NotFound from './seperate/NotFound';
 import { Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from "react-toastify";
@@ -31,6 +32,8 @@ function App() {
           <Route path="/dashboard/user-list" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/dashboard/admin-setting" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/dashboard/flashloan-history" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          {/* 404 Page */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
       </BrowserRouter>

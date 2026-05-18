@@ -34,6 +34,11 @@ export const makeApiRequest = async (params) => {
       default:
         throw new Error(`Unsupported method: ${params.method}`);
     }
+    console.log("dattt",response?.data?.logout)
+    if (response?.data?.logout) {
+      localStorage.removeItem("AdminCredentials");
+      window.location.href = "/";
+    }
     return response.data;
   } catch (error) {
     console.log("axios error", error);

@@ -422,7 +422,7 @@ function FlashLoanHistory() {
 
                                     <div className="mb-3">
                                         <label className="form-label">
-                                            Register Date
+                                            Created Date
                                         </label>
 
                                         <div
