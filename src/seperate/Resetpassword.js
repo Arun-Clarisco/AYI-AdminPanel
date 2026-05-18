@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
@@ -6,13 +6,14 @@ import * as Yup from "yup";
 import { makeApiRequest } from "../axiosService/ApiCall";
 import { toast, ToastContainer } from "react-toastify";
 import AYILogo from "../Assets/images/Ayi_logo.png";
+import { encryptData, decryptData } from "../Auth/SecurityCrypto";
 
 function Resetpassword() {
   const { token } = useParams();
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-//   const [token, setToken] = useState(null);
+  //   const [token, setToken] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("AdminCredentials");
@@ -45,10 +46,13 @@ function Resetpassword() {
     }),
 
     onSubmit: async (values) => {
+      const Payload = encryptData({
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+        token: token,
+      });
       const datas = new FormData();
-      datas.append("password", values.password);
-      datas.append("confirmPassword", values.confirmPassword);
-      datas.append("token", token);
+      datas.append("data", Payload);
       try {
         let params = {
           url: "admin-reset-password",
@@ -56,17 +60,22 @@ function Resetpassword() {
           data: datas,
         };
         const response = await makeApiRequest(params);
-
-        if (response.status == true) {
-          toast.success(response.message);
-          setTimeout(() => {
-            navigate("/");
-          }, 2000);
-        } else {
-          toast.warn(response.message);
-          localStorage.clear();
+        if (response.encryptedData) {
+          const decryptRes = decryptData(response.encryptedData);
+          if (decryptRes.status == true) {
+            toast.success(decryptRes.message);
+            setTimeout(() => {
+              navigate("/");
+            }, 2000);
+          } else {
+            toast.warn(decryptRes.message);
+            localStorage.clear();
+          }
+        }else{
+          toast.error(response.message);
         }
-      } catch (error) { 
+
+      } catch (error) {
         console.log("resetpasswordError", error);
         //toast.error("Something Went Wrong...");
       }
@@ -136,7 +145,7 @@ function Resetpassword() {
                       </span>
                     </div>
                     {formik.touched.confirmPassword &&
-                    formik.errors.confirmPassword ? (
+                      formik.errors.confirmPassword ? (
                       <div className="text-danger rq-msg mb-2">
                         {formik.errors.confirmPassword}
                       </div>

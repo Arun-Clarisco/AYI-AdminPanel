@@ -8,11 +8,12 @@ import DataTable from "react-data-table-component";
 import { makeApiRequest } from "../axiosService/ApiCall";
 import { Spinner } from "react-bootstrap";
 import { MdRefresh } from "react-icons/md";
-import { encryptData } from "../Auth/SecurityCrypto"
 import { set } from "date-fns";
 import { FaRegCopy } from "react-icons/fa";
 import { toast } from "react-toastify";
 import config from "../axiosService/Config";
+import { encryptData, decryptData } from "../Auth/SecurityCrypto";
+
 
 
 
@@ -86,12 +87,16 @@ function FlashLoanHistory() {
             };
 
             const response = await makeApiRequest(params);
-
-            if (response.status) {
-                setFlashLoanHistory(response.getFlashLoanTblDetails || []);
-                setTotalPages(response.totalItems || 0);
-            } else {
-                setFlashLoanHistory([]);
+            if (response.encryptedData) {
+                const decryptRes = decryptData(response.encryptedData);
+                if (decryptRes.status) {
+                    setFlashLoanHistory(decryptRes.getFlashLoanTblDetails || []);
+                    setTotalPages(decryptRes.totalItems || 0);
+                } else {
+                    setFlashLoanHistory([]);
+                }
+            }else{
+                toast.error(response.message);
             }
 
             setLoading(false);
@@ -481,7 +486,7 @@ function FlashLoanHistory() {
                                                         }
                                                         ranges={range}
                                                         locale={enUS}
-                                                        rangeColors={["#58f9b0"]}
+                                                        rangeColors={["#1E3FCC"]}
                                                     />
                                                 </div>
                                             )}

@@ -1,6 +1,6 @@
 
 let config = {};
-let environment = "staging";
+let environment = "local";
 if (environment == "local") {
   config = {
     adminBackendUrl: "http://localhost:3012/ayi/admin/",

@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { encryptData } from "../Auth/SecurityCrypto";
+import { encryptData, decryptData } from "../Auth/SecurityCrypto";
 import { useAccount, useConfig, useSwitchChain } from 'wagmi';
 import { ethers } from "ethers";
 import config from "../axiosService/Config";
@@ -56,9 +56,15 @@ function AdminSetting() {
       };
 
       const res = await makeApiRequest(params);
-
-      if (res.status && res.data) {
-        setNetworkFees(res.data.networkFees || []);
+      if (res.encryptedData) {
+        const decryptRes = decryptData(res.encryptedData);
+        if (decryptRes.status) {
+          setNetworkFees(decryptRes.data.networkFees || []);
+        } else {
+          setNetworkFees([]);
+        }
+      } else {
+        setNetworkFees([]);
       }
     } catch (err) {
       console.log("Failed to fetch site settings");
@@ -127,17 +133,23 @@ function AdminSetting() {
         };
 
         const res = await makeApiRequest(params);
-        if (res.status) {
-          toast.success(res.message || "Admin settings updated successfully");
-          // Update local state with new settings
-          const updatedNetworkFees = networkFees.filter(
-            (item) => item.network !== network
-          );
-          updatedNetworkFees.push({ network, adminFee });
-          setNetworkFees(updatedNetworkFees);
-        } else {
-          toast.error(res.message || "Failed to update settings");
+        if (res.encryptedData) {
+          const decryptRes = decryptData(res.encryptedData);
+          if (decryptRes.status) {
+            toast.success(decryptRes.message || "Admin settings updated successfully");
+            // Update local state with new settings
+            const updatedNetworkFees = networkFees.filter(
+              (item) => item.network !== network
+            );
+            updatedNetworkFees.push({ network, adminFee });
+            setNetworkFees(updatedNetworkFees);
+          } else {
+            toast.error(decryptRes.message);
+          }
+        }else{
+          toast.error(res.message);
         }
+
       } catch (err) {
         console.log("Error updating admin settings", err);
       } finally {
@@ -217,21 +229,6 @@ function AdminSetting() {
                             <div className="mb-3">
                               <div className="mt-3">
                                 <label className="form-label">Network</label>
-                                {/* <select
-                                  className="form-select"
-                                  value={network}
-                                  onChange={(e) => {
-                                    setNetwork(e.target.value);
-                                    switchChain?.({ chainId: e.target.value == "Ethereum" ? chains[0].id : e.target.value == "BNB" ? chains[1].id : e.target.value == "Polygon" ? chains[2].id : chains[3].id })
-                                  }}
-                                >
-                                  <option value="">Select Network</option>
-                                  <option value="ethereum">Ethereum</option>
-                                  <option value="polygon">Polygon</option>
-                                  <option value="bnb">BNB</option>
-                                  <option value="arbitrum">Arbitrum</option>
-                                </select> */}
-
                                 <select
                                   className="form-select"
                                   value={network}

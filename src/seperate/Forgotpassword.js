@@ -6,6 +6,8 @@ import { makeApiRequest } from "../axiosService/ApiCall";
 import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import AYILogo from "../Assets/images/Ayi_logo.png";
+import { encryptData, decryptData } from "../Auth/SecurityCrypto";
+
 
 function Forgotpassword() {
   const navigate = useNavigate();
@@ -30,8 +32,12 @@ function Forgotpassword() {
         .required("Email is required"),
     }),
     onSubmit: async (values) => {
+
+      const Payload = encryptData({
+        email: values.email,
+      });
       const formData = new FormData();
-      formData.append("email", values.email);
+      formData.append("data", Payload);
       try {
         setIsLoading(true);
         const params = {
@@ -40,13 +46,19 @@ function Forgotpassword() {
           data: formData,
         };
         const resp = await makeApiRequest(params);
-        if (resp.status == true) {
-          toast.success(resp.message);
-          setIsLoading(false);
-          setTimeout(() => {
-            navigate("/");
-          }, 2000);
-        } else {
+        if (resp.encryptedData) {
+          const decryptRes = decryptData(resp.encryptedData);
+          if (decryptRes.status == true) {
+            toast.success(decryptRes.message);
+            setIsLoading(false);
+            setTimeout(() => {
+              navigate("/");
+            }, 2000);
+          } else {
+            setIsLoading(false);
+            toast.error(decryptRes.message);
+          }
+        }else{
           setIsLoading(false);
           toast.error(resp.message);
         }

@@ -4,32 +4,35 @@ import { enUS } from "date-fns/locale";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { FaCalendarAlt } from "react-icons/fa";
-import DataTable from "react-data-table-component";
-import { makeApiRequest } from "../axiosService/ApiCall";
-import { Spinner } from "react-bootstrap";
 import { MdRefresh } from "react-icons/md";
-import { encryptData } from "../Auth/SecurityCrypto"
+import DataTable from "react-data-table-component";
+import { Spinner } from "react-bootstrap";
+import { makeApiRequest } from "../axiosService/ApiCall";
+import { encryptData, decryptData } from "../Auth/SecurityCrypto";
 
 function UserList() {
   const [userData, setUserData] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [registerFromDate, setRegisterFromDate] = useState("");
   const [registerToDate, setRegisterToDate] = useState("");
   const [loginFromDate, setLoginFromDate] = useState("");
   const [loginToDate, setLoginToDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalRows, setTotalRows] = useState(0);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [is_Refreshing, setIs_Refreshing] = useState(false);
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const [showRegisterCalendar, setShowRegisterCalendar] = useState(false);
   const [showLoginCalendar, setShowLoginCalendar] = useState(false);
   const registerCalendarRef = useRef(null);
   const loginCalendarRef = useRef(null);
 
-  // Register Range
+  /* =========================================
+        REGISTER RANGE
+  ========================================= */
+
   const [registerRange, setRegisterRange] = useState([
     {
       startDate: new Date(),
@@ -38,7 +41,10 @@ function UserList() {
     },
   ]);
 
-  // Login Range
+  /* =========================================
+        LOGIN RANGE
+  ========================================= */
+
   const [loginRange, setLoginRange] = useState([
     {
       startDate: new Date(),
@@ -46,6 +52,10 @@ function UserList() {
       key: "selection",
     },
   ]);
+
+  /* =========================================
+        CLOSE CALENDAR OUTSIDE CLICK
+  ========================================= */
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -60,12 +70,26 @@ function UserList() {
 
     document.addEventListener("mousedown", handleClickOutside);
 
-    return () =>
+    return () => {
       document.removeEventListener(
         "mousedown",
         handleClickOutside
       );
+    };
   }, []);
+
+  /* =========================================
+        SEARCH DEBOUNCE
+  ========================================= */
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   /* =========================================
         API CALL
@@ -81,11 +105,11 @@ function UserList() {
         registerToDate,
         loginFromDate,
         loginToDate,
-        page: currentPage,
+        page,
         limit,
       });
 
-      let params = {
+      const params = {
         url: "get-user-history",
         method: "POST",
         data: {
@@ -95,66 +119,33 @@ function UserList() {
 
       const response = await makeApiRequest(params);
 
-      if (response.status) {
-        setUserData(response.getUserTblDetails || []);
-        setTotalPages(response.totalItems || 0);
-      } else {
-        setUserData([]);
-      }
+      if (response?.encryptedData) {
+        const decryptRes = decryptData(response.encryptedData);
 
-      setLoading(false);
+        if (decryptRes?.status) {
+          setUserData(decryptRes?.getUserTblDetails || []);
+          setTotalRows(decryptRes?.totalItems || 0);
+        } else {
+          setUserData([]);
+          setTotalRows(0);
+        }
+      }
     } catch (error) {
-      console.log("error---", error);
+      console.log("get-user-history error =>", error);
+      setUserData([]);
+      setTotalRows(0);
+    } finally {
       setLoading(false);
     }
   };
 
   /* =========================================
-        USE EFFECT
+        API USE EFFECT
   ========================================= */
 
   useEffect(() => {
     getUserhistory(currentPage);
-  }, [search,registerFromDate,registerToDate,loginFromDate,loginToDate,currentPage,limit,]);
-
-  /* =========================================
-        RESET PAGINATION
-  ========================================= */
-
-  const handleReset = () => {
-    setLimit(10);
-    setCurrentPage(1);
-    setResetPaginationToggle(!resetPaginationToggle);
-  };
-
-  /* =========================================
-        CLEAR FILTER
-  ========================================= */
-
-  const handleClearFilters = async () => {
-    setIsRefreshing(true);
-    setSearch("");
-    setRegisterFromDate("");
-    setRegisterToDate("");
-    setLoginFromDate("");
-    setLoginToDate("");
-    setShowRegisterCalendar(false);
-    setShowLoginCalendar(false);
-    setCurrentPage(1);
-    setLimit(10);
-    setIs_Refreshing(!is_Refreshing);
-
-    const start = Date.now();
-    const elapsed = Date.now() - start;
-
-    if (elapsed < 500) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 500 - elapsed)
-      );
-    }
-
-    setIsRefreshing(false);
-  };
+  }, [search, registerFromDate, registerToDate, loginFromDate, loginToDate, currentPage, limit]);
 
   /* =========================================
         DATE FORMAT
@@ -164,12 +155,19 @@ function UserList() {
     try {
       if (!date) return "--";
 
-      const orgDate = new Date(date).toUTCString();
-      const hours = new Date(date).getUTCHours();
-      const amOrPm = hours >= 12 ? "PM" : "AM";
-      const formattedDate = orgDate.split(",")[1].split("GMT")[0] + amOrPm;
-      return formattedDate;
-    } catch (e) {
+      return new Date(date).toLocaleString(
+        "en-IN",
+        {
+          year: "numeric",
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        }
+      );
+    } catch {
       return "--";
     }
   };
@@ -180,10 +178,10 @@ function UserList() {
 
   const handleRegisterDateChange = (item) => {
     setRegisterRange([item.selection]);
-    const formatDate = (date) => { return date.toLocaleDateString("en-CA");};
-    setRegisterFromDate( formatDate(item.selection.startDate));
+    const formatDate = (date) => date.toLocaleDateString("en-CA");
+    setRegisterFromDate(formatDate(item.selection.startDate));
     setRegisterToDate(formatDate(item.selection.endDate));
-    handleReset();
+    setCurrentPage(1);
   };
 
   /* =========================================
@@ -192,64 +190,70 @@ function UserList() {
 
   const handleLoginDateChange = (item) => {
     setLoginRange([item.selection]);
-
-    const formatDate = (date) => {
-      return date.toLocaleDateString("en-CA");
-    };
+    const formatDate = (date) => date.toLocaleDateString("en-CA");
     setLoginFromDate(formatDate(item.selection.startDate));
     setLoginToDate(formatDate(item.selection.endDate));
-    handleReset();
+    setCurrentPage(1);
   };
 
   /* =========================================
-        SEARCH
+        CLEAR FILTERS
   ========================================= */
 
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    handleReset();
+  const handleClearFilters = () => {
+    setIsRefreshing(true);
+    setSearchInput("");
+    setSearch("");
+    setRegisterFromDate("");
+    setRegisterToDate("");
+    setLoginFromDate("");
+    setLoginToDate("");
+    setShowRegisterCalendar(false);
+    setShowLoginCalendar(false);
+    setCurrentPage(1);
+    setLimit(10);
+    setResetPaginationToggle((prev) => !prev);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 500);
   };
 
   /* =========================================
         TABLE COLUMNS
   ========================================= */
 
-  const columnsone = [
+  const columns = [
     {
       name: "S.No",
-      selector: (row, index) =>
-        (currentPage - 1) * limit + index + 1,
+      selector: (row, index) => (currentPage - 1) * limit + index + 1,
       sortable: true,
       width: "90px",
     },
 
     {
       name: "Register Date",
-      selector: (row) => dateFormat(row.dateTime),
+      selector: (row) => dateFormat(row?.dateTime),
       sortable: true,
       width: "250px",
     },
 
     {
       name: "Name",
-      selector: (row) => row.name || "--",
+      selector: (row) => row?.name || "--",
       sortable: true,
-      width: "250px",
+      width: "220px",
     },
 
     {
       name: "Email",
-      selector: (row) => row.email || "--",
+      selector: (row) => row?.email || "--",
       sortable: true,
       width: "300px",
     },
 
     {
       name: "Last Login",
-      selector: (row) =>
-        row.lastLogin
-          ? dateFormat(row.lastLogin)
-          : "--",
+      selector: (row) => row?.lastLogin ? dateFormat(row?.lastLogin) : "--",
       sortable: true,
       width: "250px",
     },
@@ -261,15 +265,16 @@ function UserList() {
         <div className="text-dark">
           <div className="row">
             <div className="col-lg-12">
+
+              {/* HEADER */}
+
               <div className="py-3 d-flex justify-content-between">
                 <h3 className="component-user text-center">
                   User List
                 </h3>
               </div>
 
-              {/* =========================================
-                    FILTER SECTION
-              ========================================= */}
+              {/* FILTER SECTION */}
 
               <div className="d-flex calendor-form align-items-end">
                 <form className="d-flex gap-lg-2 align-items-end flex-wrap">
@@ -285,8 +290,10 @@ function UserList() {
                       type="text"
                       className="form-control search-bar"
                       placeholder="Search by Name or Email"
-                      value={search}
-                      onChange={handleSearch}
+                      value={searchInput}
+                      onChange={(e) =>
+                        setSearchInput(e.target.value)
+                      }
                       style={{ width: "220px" }}
                     />
                   </div>
@@ -307,17 +314,14 @@ function UserList() {
                     >
                       <div
                         onClick={() =>
-                          setShowRegisterCalendar(
-                            !showRegisterCalendar
-                          )
+                          setShowRegisterCalendar(!showRegisterCalendar)
                         }
                         style={{
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "space-between",
                           padding: "6px",
-                          border:
-                            "1px solid var(--color-1)",
+                          border: "1px solid var(--color-1)",
                           borderRadius: "5px",
                           cursor: "pointer",
                           backgroundColor: "#fff",
@@ -325,15 +329,10 @@ function UserList() {
                         }}
                       >
                         <span>
-                          {registerFromDate &&
-                            registerToDate
-                            ? `${registerFromDate} - ${registerToDate}`
-                            : "Select Date Range"}
+                          {registerFromDate && registerToDate ? `${registerFromDate} - ${registerToDate}` : "Select Date Range"}
                         </span>
 
-                        <FaCalendarAlt
-                          style={{ color: "#555" }}
-                        />
+                        <FaCalendarAlt />
                       </div>
 
                       {showRegisterCalendar && (
@@ -344,13 +343,12 @@ function UserList() {
                             left: -80,
                             zIndex: 1000,
                             background: "#fff",
-                            boxShadow:
-                              "0px 4px 6px rgba(0,0,0,0.1)",
+                            boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
                             borderRadius: "5px",
                           }}
                         >
                           <DateRange
-                            editableDateInputs={true}
+                            editableDateInputs
                             onChange={
                               handleRegisterDateChange
                             }
@@ -359,7 +357,9 @@ function UserList() {
                             }
                             ranges={registerRange}
                             locale={enUS}
-                            rangeColors={["#58f9b0"]}
+                            rangeColors={[
+                              "#1E3FCC",
+                            ]}
                           />
                         </div>
                       )}
@@ -389,7 +389,8 @@ function UserList() {
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "space-between",
+                          justifyContent:
+                            "space-between",
                           padding: "6px",
                           border:
                             "1px solid var(--color-1)",
@@ -406,9 +407,7 @@ function UserList() {
                             : "Select Date Range"}
                         </span>
 
-                        <FaCalendarAlt
-                          style={{ color: "#555" }}
-                        />
+                        <FaCalendarAlt />
                       </div>
 
                       {showLoginCalendar && (
@@ -425,7 +424,7 @@ function UserList() {
                           }}
                         >
                           <DateRange
-                            editableDateInputs={true}
+                            editableDateInputs
                             onChange={
                               handleLoginDateChange
                             }
@@ -434,7 +433,9 @@ function UserList() {
                             }
                             ranges={loginRange}
                             locale={enUS}
-                            rangeColors={["#58f9b0"]}
+                            rangeColors={[
+                              "#1E3FCC",
+                            ]}
                           />
                         </div>
                       )}
@@ -451,7 +452,9 @@ function UserList() {
                       disabled={isRefreshing}
                     >
                       <MdRefresh
-                        style={{ fontSize: "24px" }}
+                        style={{
+                          fontSize: "24px",
+                        }}
                         className={
                           isRefreshing
                             ? "rotate-icon"
@@ -463,23 +466,19 @@ function UserList() {
                 </form>
               </div>
 
-              {/* =========================================
-                    TABLE
-              ========================================= */}
+              {/* TABLE */}
 
               <div className="liquidity-table-1">
                 <DataTable
-                  key={is_Refreshing}
-                  columns={columnsone}
+                  columns={columns}
                   data={userData}
                   theme="solarized"
-                  defaultSortAsc={true}
                   pagination
                   paginationServer
                   persistTableHead
                   paginationPerPage={limit}
-                  paginationTotalRows={totalPages}
-                  paginationRowsPerPageOptions={[5,10,15,20]}
+                  paginationTotalRows={totalRows}
+                  paginationRowsPerPageOptions={[5, 10, 15, 20]}
                   paginationResetDefaultPage={
                     resetPaginationToggle
                   }
@@ -495,14 +494,19 @@ function UserList() {
                   progressPending={loading}
                   progressComponent={
                     <div
-                      className="py-4 w-100"
-                      style={{ marginLeft: "45vw" }}
+                      className="py-4 w-100 text-center"
                     >
                       <Spinner animation="border" />
                     </div>
                   }
+                  noDataComponent={
+                    <div className="py-4">
+                      No Users Found
+                    </div>
+                  }
                 />
               </div>
+
             </div>
           </div>
         </div>

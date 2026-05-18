@@ -6,6 +6,8 @@ import { makeApiRequest } from "../axiosService/ApiCall";
 import AYILogo from "../Assets/images/Ayi_logo.png";
 import { useAccount, useConfig, useConnect, useDisconnect } from 'wagmi';
 import { Wallet } from "react-bootstrap-icons";
+import { encryptData, decryptData } from "../Auth/SecurityCrypto"
+
 
 
 function Navbar() {
@@ -35,17 +37,22 @@ function Navbar() {
         },
       };
       const adminProfileData = await makeApiRequest(params);
-      console.log("adminProfileData--", adminProfileData);
+      // console.log("adminProfileData--", adminProfileData);
 
-
-      if (adminProfileData.status) {
-        const adminProfileres = adminProfileData?.data;
-        if (adminProfileres) {
-          setAdminName(adminProfileres?.name);
-        } else {
+      if (adminProfileData.encryptedData) {
+        const decryptRes = decryptData(adminProfileData.encryptedData);
+        if (decryptRes.status) {
+          const adminProfileres = decryptRes?.data;
+          if (adminProfileres) {
+            setAdminName(adminProfileres?.name);
+          } else {
+            setAdminName("");
+          }
+        }else{
           setAdminName("");
         }
       }
+
     } catch (error) {
       console.log("err--", error);
     }
@@ -105,8 +112,8 @@ function Navbar() {
                 </button>
               }
 
-              {isConnected ? 
-              <button
+              {isConnected ?
+                <button
                   className="custom-nav-button-1 d-flex align-items-center"
                   onClick={() => disconnect()}
                   style={{
@@ -121,9 +128,9 @@ function Navbar() {
                 >
                   Disconnect
                 </button>
-                : 
+                :
                 <></>
-                }
+              }
 
               <button
                 className="custom-nav-button-1 d-flex align-items-center"
