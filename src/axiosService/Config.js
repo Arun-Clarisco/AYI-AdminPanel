@@ -12,7 +12,7 @@ if (environment == "local") {
     Base: "https://basescan.org/tx/",
 
     FlashLoanContract: {
-      Ethereum: "",
+      Ethereum: "0xd4e697c4e38d4e4a9de1c731fd2d22b23dec3a38",
       BNB: "0xb7c5801c2336545a19adf55ca69d1a1c74f135c8",
       Polygon: "0x247080acbcadefc91ebd99366cf056beec3331c7",
       Arbitrum: "0x9e64ea527bdD2752c305F720397E6337320F69E7",
@@ -38,7 +38,7 @@ if (environment == "local") {
     Base: "https://basescan.org/tx/",
 
     FlashLoanContract: {
-      Ethereum: "",
+      Ethereum: "0xd4e697c4e38d4e4a9de1c731fd2d22b23dec3a38",
       BNB: "0xb7c5801c2336545a19adf55ca69d1a1c74f135c8",
       Polygon: "0x247080acbcadefc91ebd99366cf056beec3331c7",
       Arbitrum: "0x9e64ea527bdD2752c305F720397E6337320F69E7",
@@ -65,7 +65,7 @@ if (environment == "local") {
     Base: "https://basescan.org/tx/",
 
     FlashLoanContract: {
-      Ethereum: "",
+      Ethereum: "0xd4e697c4e38d4e4a9de1c731fd2d22b23dec3a38",
       BNB: "0xb7c5801c2336545a19adf55ca69d1a1c74f135c8",
       Polygon: "0x247080acbcadefc91ebd99366cf056beec3331c7",
       Arbitrum: "0x9e64ea527bdD2752c305F720397E6337320F69E7",
