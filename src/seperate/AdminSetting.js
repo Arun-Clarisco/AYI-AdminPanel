@@ -18,7 +18,7 @@ import axios from "axios";
 function AdminSetting() {
   const [loading, setLoading] = useState(false);
   const [adminFee, setAdminFee] = useState("");
-  const [network, setNetwork] = useState("");
+  const [network, setNetwork] = useState("Ethereum");
   const [networkFees, setNetworkFees] = useState([]);
   const { chain } = useAccount();
   const { chains, switchChain } = useSwitchChain();
@@ -74,14 +74,6 @@ function AdminSetting() {
 
   const handleNetworkChange = async (value) => {
     setNetwork(value);
-
-    const existing = networkFees.find(
-      (item) => item.network === value
-    );
-
-    console.log(existing, "existing")
-
-    if (existing) {
       try {
         const provider = new ethers.JsonRpcProvider(
           value === 'Ethereum'
@@ -103,10 +95,13 @@ function AdminSetting() {
         console.log(error)
         setAdminFee("");
       }
-    } else {
-      setAdminFee("");
-    }
   };
+
+  useEffect(()=>{
+    if(network){
+      handleNetworkChange(network)
+    }
+  },[network])
 
   const submitAdminSetting = async (e) => {
     e.preventDefault();
@@ -238,7 +233,7 @@ function AdminSetting() {
                                 <select
                                   className="form-select"
                                   value={network}
-                                  onChange={(e) => handleNetworkChange(e.target.value)}
+                                  onChange={(e) => setNetwork(e.target.value)}
                                 >
                                   <option value="Ethereum">Ethereum</option>
                                   <option value="Polygon">Polygon</option>

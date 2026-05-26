@@ -20,7 +20,7 @@ if (environment == "local") {
     },
 
     RPC: {
-      Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
+      Ethereum: 'https://eth-mainnet.g.alchemy.com/v2/Gs-A22_io0wJ1Qm74XDVw',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
       BNB: 'https://bsc-dataseed.binance.org/',
       Polygon: 'https://polygon.drpc.org/',
@@ -46,7 +46,7 @@ if (environment == "local") {
     },
 
     RPC: {
-      Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
+      Ethereum: 'https://eth-mainnet.g.alchemy.com/v2/Gs-A22_io0wJ1Qm74XDVw',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
       BNB: 'https://bsc-dataseed.binance.org/',
       Polygon: 'https://polygon.drpc.org/',
@@ -73,7 +73,7 @@ if (environment == "local") {
     },
 
     RPC: {
-      Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
+      Ethereum: 'https://eth-mainnet.g.alchemy.com/v2/Gs-A22_io0wJ1Qm74XDVw',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
       BNB: 'https://bsc-dataseed.binance.org/',
       Polygon: 'https://polygon.drpc.org/',
