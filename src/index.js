@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import "react-toastify/dist/ReactToastify.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createConfig, http, WagmiProvider } from 'wagmi'
-import { mainnet, bsc, arbitrum } from 'wagmi/chains'
+import { mainnet, bsc, arbitrum, base } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { metaMask } from 'wagmi/connectors';
 import polygon from './manualNetwork/polygon';
@@ -15,12 +15,13 @@ const queryClient = new QueryClient();
 
 
 const config = createConfig({
-  chains: [mainnet, bsc, polygon, arbitrum],
+  chains: [mainnet, bsc, polygon, arbitrum, base],
   transports: {
     [mainnet.id]: http(),
     [bsc.id]: http(),
     [polygon.id]: http(),
     [arbitrum.id]: http(),
+    [base.id]: http()
   },
   connectors: [
     metaMask(),

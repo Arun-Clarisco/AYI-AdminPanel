@@ -34,6 +34,7 @@ function AdminSetting() {
     BNB: "BNB Smart Chain",
     Polygon: "Polygon",
     Arbitrum: "Arbitrum One",
+    Base: "Base"
   };
 
 
@@ -43,7 +44,7 @@ function AdminSetting() {
       const expectedChainName = networkMap[network];
       console.log(expectedChainName)
       if (chain?.name != expectedChainName) {
-        switchChain?.({ chainId: network == "Ethereum" ? chains[0].id : network == "BNB" ? chains[1].id : network == "Polygon" ? chains[2].id : chains[3].id });
+        switchChain?.({ chainId: network == "Ethereum" ? chains[0].id : network == "BNB" ? chains[1].id : network == "Polygon" ? chains[2].id : network == "Arbitrum" ? chains[3].id : network == "Base" ? chains[4].id : chains[0].id });
       }
     }
   }, [network])
@@ -89,7 +90,7 @@ function AdminSetting() {
               ? config.RPC.Arbitrum
               : value === 'BNB'
                 ? config.RPC.BNB
-                : config.RPC.Polygon
+                : value === 'Polygon' ? config.RPC.Polygon : config.RPC.Base
         );
         const contract = config.FlashLoanContract[value.toString()];
         console.log(contract)
@@ -97,7 +98,7 @@ function AdminSetting() {
         const fee = await flashLoanContract.fee();
         const feeEther = ethers.formatUnits(fee, 18);
         console.log(feeEther)
-        setAdminFee(feeEther == existing.adminFee ? feeEther : "");
+        setAdminFee(feeEther);
       } catch (error) {
         console.log(error)
         setAdminFee("");
@@ -117,6 +118,7 @@ function AdminSetting() {
     setLoading(true);
 
     const contractStatus = await handleChangeFee(adminFee);
+    console.log(contractStatus,"contractStatus")
     if (contractStatus) {
 
       try {
@@ -146,7 +148,7 @@ function AdminSetting() {
           } else {
             toast.error(decryptRes.message);
           }
-        }else{
+        } else {
           toast.error(res.message);
         }
 
@@ -171,7 +173,7 @@ function AdminSetting() {
               ? config.RPC.Arbitrum
               : network === 'BNB'
                 ? config.RPC.BNB
-                : config.RPC.Polygon
+                : network === 'Polygon' ? config.RPC.Polygon : config.RPC.Base
         );
         const contract = config.FlashLoanContract[network.toString()];
         const flashLoanContract = new ethers.Contract(contract, flashLoanAbi, provider);
@@ -180,6 +182,7 @@ function AdminSetting() {
         if (adminAddress != address) {
           toast.error("You are not a admin!")
           setLoading(false);
+          return false
         }
         console.log(fee)
 
@@ -192,10 +195,13 @@ function AdminSetting() {
           functionName: 'changefee',
           args: [feeWei],
         });
+        console.log(hash)
 
         let transactionReceipt = await waitForTransactionReceipt(configs, {
           hash: hash,
         })
+
+        console.log(transactionReceipt)
 
         return true;
 
@@ -238,25 +244,32 @@ function AdminSetting() {
                                   <option value="Polygon">Polygon</option>
                                   <option value="BNB">BNB</option>
                                   <option value="Arbitrum">Arbitrum</option>
+                                  <option value="Base">Base</option>
                                 </select>
                               </div>
                             </div>
 
                             <div className="mb-3">
-                              <label className="form-label">
-                                Admin fee
-                              </label>
+                              <label className="form-label">Admin fee</label>
+
                               <input
                                 type="text"
-                                inputMode="numeric"
-                                pattern="[0-9]*"
                                 className="form-control"
                                 value={adminFee}
                                 onChange={(e) => {
-                                  const val = e.target.value;
-                                  if (/^\d*$/.test(val)) setAdminFee(val);
+                                  let val = e.target.value;
+
+                                  if (!/^\d*\.?\d*$/.test(val)) return;
+
+                                  if (/^0\d+/.test(val)) return;
+
+                                  if (val === ".") return;
+
+                                  if (/^00+/.test(val)) return;
+
+
+                                  setAdminFee(val);
                                 }}
-                                placeholder="e.g. 5"
                               />
                             </div>
 

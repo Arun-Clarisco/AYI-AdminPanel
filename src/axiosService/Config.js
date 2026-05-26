@@ -1,6 +1,6 @@
 
 let config = {};
-let environment = "staging";
+let environment = "local";
 if (environment == "local") {
   config = {
     adminBackendUrl: "http://localhost:3012/ayi/admin/",
@@ -9,20 +9,22 @@ if (environment == "local") {
     Arbitrum: 'https://arbiscan.io/tx/',
     BNB: 'https://bscscan.com/tx/',
     Polygon: 'https://polygonscan.com/tx/',
+    Base: "https://basescan.org/tx/",
 
     FlashLoanContract: {
       Ethereum: "",
-      BNB: "0x85B0040DcB5BfBd7614a21934597698bb48F67A5",
-      Polygon: "",
-      Arbitrum: ""
+      BNB: "0xb7c5801c2336545a19adf55ca69d1a1c74f135c8",
+      Polygon: "0x247080acbcadefc91ebd99366cf056beec3331c7",
+      Arbitrum: "0x9e64ea527bdD2752c305F720397E6337320F69E7",
+      Base: "0xa4e63206EF039c48f6602EE5106359d9561510DF"
     },
 
     RPC: {
-      Sepolia: "https://eth-sepolia-testnet.api.pocket.network",
       Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
       BNB: 'https://bsc-dataseed.binance.org/',
       Polygon: 'https://polygon.drpc.org/',
+      Base: 'https://base-rpc.publicnode.com'
     },
   };
 } else if (environment == "staging") {
@@ -33,20 +35,22 @@ if (environment == "local") {
     Arbitrum: 'https://arbiscan.io/tx/',
     BNB: 'https://bscscan.com/tx/',
     Polygon: 'https://polygonscan.com/tx/',
+    Base: "https://basescan.org/tx/",
 
-        FlashLoanContract: {
+    FlashLoanContract: {
       Ethereum: "",
-      BNB: "0x85B0040DcB5BfBd7614a21934597698bb48F67A5",
-      Polygon: "",
-      Arbitrum: ""
+      BNB: "0xb7c5801c2336545a19adf55ca69d1a1c74f135c8",
+      Polygon: "0x247080acbcadefc91ebd99366cf056beec3331c7",
+      Arbitrum: "0x9e64ea527bdD2752c305F720397E6337320F69E7",
+      Base: "0xa4e63206EF039c48f6602EE5106359d9561510DF"
     },
 
     RPC: {
-      Sepolia: "https://eth-sepolia-testnet.api.pocket.network",
       Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
       BNB: 'https://bsc-dataseed.binance.org/',
       Polygon: 'https://polygon.drpc.org/',
+      Base: 'https://base-rpc.publicnode.com'
     },
 
   };
@@ -58,20 +62,22 @@ if (environment == "local") {
     Arbitrum: 'https://arbiscan.io/tx/',
     BNB: 'https://bscscan.com/tx/',
     Polygon: 'https://polygonscan.com/tx/',
+    Base: "https://basescan.org/tx/",
 
-        FlashLoanContract: {
+    FlashLoanContract: {
       Ethereum: "",
-      BNB: "0x85B0040DcB5BfBd7614a21934597698bb48F67A5",
-      Polygon: "",
-      Arbitrum: ""
+      BNB: "0xb7c5801c2336545a19adf55ca69d1a1c74f135c8",
+      Polygon: "0x247080acbcadefc91ebd99366cf056beec3331c7",
+      Arbitrum: "0x9e64ea527bdD2752c305F720397E6337320F69E7",
+      Base: "0xa4e63206EF039c48f6602EE5106359d9561510DF"
     },
 
     RPC: {
-      Sepolia: "https://eth-sepolia-testnet.api.pocket.network",
       Ethereum: 'https://mainnet.infura.io/v3/your_infura_key',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
       BNB: 'https://bsc-dataseed.binance.org/',
       Polygon: 'https://polygon.drpc.org/',
+      Base: 'https://base-rpc.publicnode.com'
     },
 
   };

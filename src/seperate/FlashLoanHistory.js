@@ -287,6 +287,7 @@ function FlashLoanHistory() {
                     Arbitrum: config.Arbitrum,
                     BNB: config.BNB,
                     Polygon: config.Polygon,
+                    Base: config.Base
                 };
 
                 const explorerUrl = explorerMap[row?.network];
@@ -395,6 +396,7 @@ function FlashLoanHistory() {
                                             <option value="Polygon">Polygon</option>
                                             <option value="BNB">BNB</option>
                                             <option value="Arbitrum">Arbitrum</option>
+                                            <option value="Base">Base</option>
                                         </select>
                                     </div>
 

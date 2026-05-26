@@ -83,6 +83,41 @@
                 "internalType": "uint256[]",
                 "name": "j",
                 "type": "uint256[]"
+            },
+            {
+                "internalType": "address",
+                "name": "receiver",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "slipage",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes32[]",
+                "name": "poolId",
+                "type": "bytes32[]"
+            },
+            {
+                "internalType": "bool",
+                "name": "_multiLending",
+                "type": "bool"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "_multiLendingAmount",
+                "type": "uint256[]"
+            },
+            {
+                "internalType": "bytes[]",
+                "name": "_oneInchData",
+                "type": "bytes[]"
+            },
+            {
+                "internalType": "address[]",
+                "name": "_oneInchExecutor",
+                "type": "address[]"
             }
         ],
         "name": "executeFlashLoan",
