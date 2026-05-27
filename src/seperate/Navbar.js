@@ -38,7 +38,6 @@ function Navbar() {
         },
       };
       const adminProfileData = await makeApiRequest(params);
-      // console.log("adminProfileData--", adminProfileData);
 
       if (adminProfileData.encryptedData) {
         const decryptRes = decryptData(adminProfileData.encryptedData);

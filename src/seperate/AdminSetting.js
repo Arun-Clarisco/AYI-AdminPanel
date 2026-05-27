@@ -39,10 +39,8 @@ function AdminSetting() {
 
 
   useEffect(() => {
-    console.log(chain?.name, network)
     if (chain?.id && network) {
       const expectedChainName = networkMap[network];
-      console.log(expectedChainName)
       if (chain?.name != expectedChainName) {
         switchChain?.({ chainId: network == "Ethereum" ? chains[0].id : network == "BNB" ? chains[1].id : network == "Polygon" ? chains[2].id : network == "Arbitrum" ? chains[3].id : network == "Base" ? chains[4].id : chains[0].id });
       }
@@ -85,11 +83,9 @@ function AdminSetting() {
                 : value === 'Polygon' ? config.RPC.Polygon : config.RPC.Base
         );
         const contract = config.FlashLoanContract[value.toString()];
-        console.log(contract)
         const flashLoanContract = new ethers.Contract(contract, flashLoanAbi, provider);
         const fee = await flashLoanContract.fee();
         const feeEther = ethers.formatUnits(fee, 18);
-        console.log(feeEther)
         setAdminFee(feeEther);
       } catch (error) {
         console.log(error)
@@ -113,7 +109,6 @@ function AdminSetting() {
     setLoading(true);
 
     const contractStatus = await handleChangeFee(adminFee);
-    console.log(contractStatus,"contractStatus")
     if (contractStatus) {
 
       try {
@@ -173,16 +168,13 @@ function AdminSetting() {
         const contract = config.FlashLoanContract[network.toString()];
         const flashLoanContract = new ethers.Contract(contract, flashLoanAbi, provider);
         const adminAddress = await flashLoanContract.admin();
-        console.log(adminAddress, "adminaddress")
         if (adminAddress != address) {
           toast.error("You are not a admin!")
           setLoading(false);
           return false
         }
-        console.log(fee)
 
         const feeWei = ethers.parseEther(fee.toString());
-        console.log(feeWei)
 
         const hash = await writeContract(configs, {
           address: contract,
@@ -190,13 +182,11 @@ function AdminSetting() {
           functionName: 'changefee',
           args: [feeWei],
         });
-        console.log(hash)
 
         let transactionReceipt = await waitForTransactionReceipt(configs, {
           hash: hash,
         })
 
-        console.log(transactionReceipt)
 
         return true;
 

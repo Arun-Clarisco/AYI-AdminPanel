@@ -16,7 +16,6 @@ const ProtectedRoute = (props) => {
                 method: "POST",
             }
             let response = await makeApiRequest(params);
-            console.log("fetchData---",response);
             
             if (response.status) {
             } else {
@@ -34,7 +33,6 @@ const ProtectedRoute = (props) => {
     },[location.pathname])
 
     useEffect(() => {
-        // console.log(hasFetched.current,"hasFetched.current>>>>>>>>>>>>>")
     if (!hasFetched.current) {
       fetchData();
       hasFetched.current = true;

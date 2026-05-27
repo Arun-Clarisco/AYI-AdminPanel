@@ -92,7 +92,6 @@ function Dashboard({ pageName }) {
   useEffect(() => {
     $("#mobile-three-line-collapse").click(function () {
       $("#mySidenav").css("width", "250px");
-      // console.log("Mobile three line collapse clicked");
     });
     $("#mobile-close-collapse").click(function () {
       $("#mySidenav").css("width", "0px");

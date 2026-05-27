@@ -75,11 +75,9 @@ function Login() {
           data: formData,
         };
         const loginResponse = await makeApiRequest(params);
-        console.log("login--", loginResponse);
 
         if (loginResponse.encryptedData) {
           const logindecryptRes = decryptData(loginResponse.encryptedData);
-          console.log("logindecryptRes", logindecryptRes);
 
           // const logindecryptRes = new Date().getTime();
           if (logindecryptRes.status == true) {
@@ -123,7 +121,6 @@ function Login() {
         method: "GET",
       };
       const copyrightData = await makeApiRequest(params);
-      // console.log("copyrightData--", copyrightData);
       if (copyrightData.status == true) {
         setCopyright(copyrightData.data[0].copyright);
       }
