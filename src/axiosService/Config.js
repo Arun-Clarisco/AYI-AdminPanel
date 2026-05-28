@@ -19,10 +19,10 @@ if (environment == "local") {
       Base: "0xa4e63206EF039c48f6602EE5106359d9561510DF"
     },
 
-    RPC: {
-      Ethereum: 'https://eth-mainnet.g.alchemy.com/v2/Gs-A22_io0wJ1Qm74XDVw',
+     RPC: {
+      Ethereum: 'https://ethereum-rpc.publicnode.com',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
-      BNB: 'https://bsc-dataseed.binance.org/',
+      BNB: 'https://bsc-dataseed1.binance.org',
       Polygon: 'https://polygon.drpc.org/',
       Base: 'https://base-rpc.publicnode.com'
     },
@@ -45,10 +45,10 @@ if (environment == "local") {
       Base: "0xa4e63206EF039c48f6602EE5106359d9561510DF"
     },
 
-    RPC: {
-      Ethereum: 'https://eth-mainnet.g.alchemy.com/v2/Gs-A22_io0wJ1Qm74XDVw',
+     RPC: {
+      Ethereum: 'https://ethereum-rpc.publicnode.com',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
-      BNB: 'https://bsc-dataseed.binance.org/',
+      BNB: 'https://bsc-dataseed1.binance.org',
       Polygon: 'https://polygon.drpc.org/',
       Base: 'https://base-rpc.publicnode.com'
     },
@@ -72,10 +72,10 @@ if (environment == "local") {
       Base: "0xa4e63206EF039c48f6602EE5106359d9561510DF"
     },
 
-    RPC: {
-      Ethereum: 'https://eth-mainnet.g.alchemy.com/v2/Gs-A22_io0wJ1Qm74XDVw',
+     RPC: {
+      Ethereum: 'https://ethereum-rpc.publicnode.com',
       Arbitrum: 'https://arb1.arbitrum.io/rpc',
-      BNB: 'https://bsc-dataseed.binance.org/',
+      BNB: 'https://bsc-dataseed1.binance.org',
       Polygon: 'https://polygon.drpc.org/',
       Base: 'https://base-rpc.publicnode.com'
     },
