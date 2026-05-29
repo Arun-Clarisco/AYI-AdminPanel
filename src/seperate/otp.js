@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 // import toast from 'react-hot-toast';
 // import { helper } from '../../service/helper';
-import LogoWhite from '../Assets/images/LogoWhite.png';
+import AYILogo from "../Assets/images/Ayi_logo.png";
 import { ToastContainer, toast } from "react-toastify";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -113,21 +113,21 @@ export default function OtpPage({
             const params = {
                 url: "admin-verifyLoginOTP",
                 method: "POST",
-                data: {data},
+                data: { data },
             };
             const response = await makeApiRequest(params);
             console.log(response)
 
             const responseData = decryptData(response.data);
             if (responseData.status) {
-                
+
                 toast.success(responseData?.message || 'OTP verified successfully');
                 setOtpExpired(false);
-                    localStorage.setItem("AdminCredentials", responseData.token);
-                    setTimeout(() => {
-                        navigate("/dashboard/user-list");
-                    }, 3000);
-                
+                localStorage.setItem("AdminCredentials", responseData.token);
+                setTimeout(() => {
+                    navigate("/dashboard/user-list");
+                }, 3000);
+
             } else {
                 toast.error(responseData.message);
                 if (
@@ -156,16 +156,16 @@ export default function OtpPage({
 
             setResendLoading(true);
             const data = encryptData({
-                    name: registerData?.name,
+                name: registerData?.name,
 
-                    email: registerData?.email,
+                email: registerData?.email,
 
-                    password: registerData?.password,
-                })
+                password: registerData?.password,
+            })
             const params = {
                 url: "admin-resendMailOTP",
                 method: "POST",
-                data: {data},
+                data: { data },
             };
             const response = await makeApiRequest(params);
 
@@ -220,99 +220,101 @@ export default function OtpPage({
     return (
         <div className="container mx-auto">
             <ToastContainer />
-            <img src={LogoWhite} alt="AYI Flashloan" className='w-16 h-full mx-auto mb-4' />
-            <div className="bg-[#0F258F] border border-[#1E3FCC] rounded-xl md:p-8 p-4 w-full md:max-w-xl mx-auto">
-                {/* HEADER */}
-                <div className="mb-8">
-                    <h2 className="text-3xl font-bold mb-2 text-center">
-                        {title}
-                    </h2>
-                    <p className="text-sm text-slate-300 text-center">
-                        Enter the OTP sent to your email address
-                    </p>
-                </div>
-                {/* OTP INPUT */}
-                <div className="mb-4">
-                    <label className="text-xs mb-2 block">
-                        OTP Code
-                    </label>
-                    <div className="relative">
-                        <ShieldCheck
-                            size={16}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        />
-                        <input
-                            type="text"
-                            value={otp}
-                            onChange={(e) => {
-                                const value =
-                                    e.target.value.replace(
-                                        /\D/g,
-                                        ''
-                                    );
-                                setOtp(value);
-                            }}
-                            placeholder="Enter 6 digit OTP"
-                            maxLength={6}
-                            className="w-full bg-[#3d57d82f] placeholder:text-slate-400 border border-[#1E3FCC] rounded-xl pl-11 pr-12 py-3 text-sm focus:outline-none focus:border-sky-500 transition-colors"
-                        />
+            <div className="custom-login pt-0">
+                <div className="container">
+                    <div className="row min-vh-100 align-items-center justify-content-center">
+                        <div className="col-lg-5">
+                            <div className="custom-inside-log-in">
+                                <Link
+                                    className="navbar-brand custom-right-nav-name-2"
+                                    to="/"
+                                >
+                                    <img src={AYILogo} alt="Logo" />
+                                </Link>
+                                <h6 className="fw-bold">
+                                    {title}
+                                </h6>
+                                <div className="mb-1 mt-4 custom-form">
+                                    <label className="form-label">
+                                        Enter the OTP sent to your email address
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={otp}
+                                            onChange={(e) => {
+                                                const value =
+                                                    e.target.value.replace(
+                                                        /\D/g,
+                                                        ''
+                                                    );
+                                                setOtp(value);
+                                            }}
+                                            placeholder="Enter 6 digit OTP"
+                                            maxLength={6}
+                                            className="form-control input-form py-2"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center mb-6">
+                                    <div>
+
+                                        {
+                                            timer > 0 ? (
+                                                <span className="text-muted fs-6">
+                                                    OTP expires in{" "}
+                                                    <span className="text-dark">
+                                                        {formatTime(timer)}
+                                                    </span>
+                                                </span>
+                                            ) : (
+                                                <span className="text-danger fs-6">
+                                                    OTP Expired
+                                                </span>
+                                            )
+                                        }
+                                    </div>
+                                    {
+                                        otpExpired && (
+                                            <button
+                                                onClick={handleResendOtp}
+                                                disabled={resendLoading}
+                                                className="border-0 bg-transparent text-decoration-underline"
+                                            >
+                                                {
+                                                    resendLoading
+                                                        ? 'Resending...'
+                                                        : 'Resend OTP'
+                                                 }
+                                            </button>
+                                        )
+                                    }
+                                </div>
+
+                                <div className='d-flex flex-column mt-4 gap-3'>
+                                    <button
+                                        onClick={handleVerifyOtp}
+                                        disabled={loading || otpExpired}
+                                        className="w-100 custom-main-button"
+                                    >
+                                        {
+                                            loading ? 'Verifying...' : 'Verify OTP'
+                                        }
+                                        <ArrowRight size={16} className='ms-1' />
+                                    </button>
+                                    {/* <button
+                                        onClick={() => { navigate("/dashboard/user-list") }}
+                                        className="w-full border-0 rounded"
+                                        style={{padding:"10px 0px"}}
+                                    >
+                                        Back
+                                    </button> */}
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
-                {/* TIMER + RESEND */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        {
-                            timer > 0 ? (
-                                <span className="text-slate-300 text-sm">
-                                    OTP expires in{" "}
-                                    <span className="text-[#42fff5]">
-                                        {formatTime(timer)}
-                                    </span>
-                                </span>
-                            ) : (
-                                <span className="text-red-400 text-sm">
-                                    OTP Expired
-                                </span>
-                            )
-                        }
-                    </div>
-                    {
-                        otpExpired && (
-                            <button
-                                onClick={handleResendOtp}
-                                disabled={resendLoading}
-                                className="text-sm text-[#42fff5] hover:text-white disabled:opacity-50"
-                            >
-                                {
-                                    resendLoading
-                                        ? 'Resending...'
-                                        : 'Resend OTP'
-                                }
-                            </button>
-                        )
-                    }
-                </div>
-
-                {/* VERIFY BUTTON */}
-
-                <button
-                    onClick={handleVerifyOtp}
-                    disabled={loading || otpExpired}
-                    className="w-full bg-[#42fff5] text-black rounded-xl py-3.5 font-medium flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                    {
-                        loading ? 'Verifying...' : 'Verify OTP'
-                    }
-                    <ArrowRight size={16} />
-                </button>
-                {/* BACK BUTTON */}
-                <button
-                    onClick={() => { navigate("/dashboard/user-list") }}
-                    className="w-full mt-4 border border-[#1E3FCC] rounded-xl py-3 text-sm flex items-center justify-center gap-2 hover:bg-[#1E3FCC]"
-                >
-                    <   ArrowLeft size={16} />
-                    Back
-                </button>
             </div>
         </div>
     );
