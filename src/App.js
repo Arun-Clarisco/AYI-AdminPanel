@@ -12,6 +12,7 @@ import { Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from "react-toastify";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import OtpPage from "./seperate/otp";
 
 
 function App() {
@@ -25,7 +26,9 @@ function App() {
         {/* <ToastContainer /> */}
         <Routes>
           {/* Redirect from "/" to "/dashboard/analytics" */}
+
           <Route exact path="/" element={<Login />} />
+           <Route exact path="/otp" element={<OtpPage />} />
           <Route exact path="/forgot-password" element={<Forgotpassword />} />
           <Route exact path="/resetpassword/:token" element={<Resetpassword />} />
           <Route exact path="/register" element={<Register />} />

@@ -86,8 +86,8 @@ function Login() {
             localStorage.setItem("AdminCredentials", logindecryptRes.token);
             setIsLoading(false);
             setTimeout(() => {
-              navigate("/dashboard/user-list");
-            }, 3000);
+              navigate("/otp");
+            }, 3000); 
           } else {
             setIsLoading(false);
             toast.error(logindecryptRes.message);
