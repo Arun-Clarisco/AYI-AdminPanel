@@ -3,12 +3,13 @@ import { jwtDecode } from 'jwt-decode';
 import { ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 // import toast from 'react-hot-toast';
 // import { helper } from '../../service/helper';
-import LogoWhite from '../../assets/image/LogoWhite.png';
+import LogoWhite from '../Assets/images/LogoWhite.png';
 import { ToastContainer, toast } from "react-toastify";
 
 import { Link, useNavigate } from "react-router-dom";
 
 import { makeApiRequest } from "../axiosService/ApiCall";
+import { decryptData, encryptData } from '../Auth/SecurityCrypto';
 
 export default function OtpPage({
     title = 'Verify OTP'
@@ -30,8 +31,8 @@ export default function OtpPage({
     useEffect(() => {
         try {
 
-            
-        if (!registerData?.token) return;
+
+            if (!registerData?.token) return;
 
             const decoded = jwtDecode(registerData.token);
             const currentTime = Math.floor(Date.now() / 1000);
@@ -102,45 +103,35 @@ export default function OtpPage({
                 return;
             }
             setLoading(true);
-            const payload =
-                isLoginOtp
-                    ? {
-                        LoginToken: registerData?.token,
-                        verifyOTP: otp,
-                    }
-                    : {
-                        RegisterToken: registerData?.token,
-                        verifyOTP: otp,
-                    };
+            const token = localStorage.getItem('AdminCredentials')
+            setRegisterData({ token: token })
+            const data = encryptData({
+                LoginToken: token || registerData?.token,
+                verifyOTP: otp,
+            });
+
             const params = {
                 url: "admin-verifyLoginOTP",
                 method: "POST",
-                data: payload,
+                data: {data},
             };
             const response = await makeApiRequest(params);
+            console.log(response)
 
-            // const response = await helper(
-            //     payload,
-            //     isLoginOtp ? 'verifyLoginOTP' : 'verifyRegisterOTP'
-            // );
-
-            if (response.success) {
-                const responseData = response.data;
+            const responseData = decryptData(response.data);
+            if (responseData.status) {
+                
                 toast.success(responseData?.message || 'OTP verified successfully');
                 setOtpExpired(false);
-                if (isLoginOtp) {
-                    localStorage.setItem("email", registerData.email);
-                    localStorage.setItem("AdminCredentials", response.token);
+                    localStorage.setItem("AdminCredentials", responseData.token);
                     setTimeout(() => {
                         navigate("/dashboard/user-list");
                     }, 3000);
-                } else {
-                    toast.error('OTP verification failed');
-                }
+                
             } else {
-                toast.error(response.error);
+                toast.error(responseData.message);
                 if (
-                    response.error?.toLowerCase().includes('expired')
+                    response.message?.toLowerCase().includes('expired')
                 ) {
                     setOtpExpired(true);
                     setTimer(0);
@@ -164,16 +155,17 @@ export default function OtpPage({
         try {
 
             setResendLoading(true);
-            const params = {
-                url: "admin-resendMailOTP",
-                method: "POST",
-                data: {
+            const data = encryptData({
                     name: registerData?.name,
 
                     email: registerData?.email,
 
                     password: registerData?.password,
-                },
+                })
+            const params = {
+                url: "admin-resendMailOTP",
+                method: "POST",
+                data: {data},
             };
             const response = await makeApiRequest(params);
 
