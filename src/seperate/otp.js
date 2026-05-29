@@ -27,17 +27,22 @@ export default function OtpPage({
     /* =========================================
        START TIMER FROM JWT TOKEN
     ========================================= */
+    useEffect(() => {
+        const token = localStorage.getItem('AdminCredentials');
+        const email = localStorage.getItem('email');
+        setRegisterData({ token: token, email: email })
+    }, []);
 
     useEffect(() => {
         try {
 
 
             if (!registerData?.token) return;
-
-            const decoded = jwtDecode(registerData.token);
+            // console.log('registerData.token :>> ', registerData?.token);
+            const decoded = jwtDecode(registerData?.token);
+            // console.log('decoded :>> ', decoded);
             const currentTime = Math.floor(Date.now() / 1000);
             const timeLeft = decoded.exp - currentTime;
-
             if (timeLeft > 0) {
                 setTimer(timeLeft);
                 setOtpExpired(false);
@@ -46,7 +51,6 @@ export default function OtpPage({
                 setOtpExpired(true);
             }
         } catch (error) {
-            console.log(error);
             setTimer(0);
             setOtpExpired(true);
         }
@@ -113,21 +117,20 @@ export default function OtpPage({
             const params = {
                 url: "admin-verifyLoginOTP",
                 method: "POST",
-                data: {data},
+                data: { data },
             };
             const response = await makeApiRequest(params);
-            console.log(response)
 
             const responseData = decryptData(response.data);
             if (responseData.status) {
-                
+
                 toast.success(responseData?.message || 'OTP verified successfully');
                 setOtpExpired(false);
-                    localStorage.setItem("AdminCredentials", responseData.token);
-                    setTimeout(() => {
-                        navigate("/dashboard/user-list");
-                    }, 3000);
-                
+                localStorage.setItem("AdminCredentials", responseData.token);
+                setTimeout(() => {
+                    navigate("/dashboard/user-list");
+                }, 3000);
+
             } else {
                 toast.error(responseData.message);
                 if (
@@ -155,17 +158,14 @@ export default function OtpPage({
         try {
 
             setResendLoading(true);
+            const token = localStorage.getItem('AdminCredentials')
             const data = encryptData({
-                    name: registerData?.name,
-
-                    email: registerData?.email,
-
-                    password: registerData?.password,
-                })
+                LoginToken: token
+            })
             const params = {
                 url: "admin-resendMailOTP",
                 method: "POST",
-                data: {data},
+                data: { data },
             };
             const response = await makeApiRequest(params);
 
@@ -195,11 +195,9 @@ export default function OtpPage({
                     const currentTime = Math.floor(Date.now() / 1000);
 
                     const timeLeft = decoded.exp - currentTime;
-
                     setTimer(timeLeft > 0 ? timeLeft : 0);
 
                 } catch (err) {
-                    console.log(err);
                     setTimer(0);
                     setOtpExpired(true);
                 }
