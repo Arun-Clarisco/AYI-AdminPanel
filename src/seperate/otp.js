@@ -40,7 +40,7 @@ export default function OtpPage({
             if (!registerData?.token) return;
             // console.log('registerData.token :>> ', registerData?.token);
             const decoded = jwtDecode(registerData?.token);
-            // console.log('decoded :>> ', decoded);
+            console.log('decoded :>> ', decoded);
             const currentTime = Math.floor(Date.now() / 1000);
             const timeLeft = decoded.exp - currentTime;
             if (timeLeft > 0) {
@@ -165,9 +165,8 @@ export default function OtpPage({
         try {
 
             setResendLoading(true);
-            const token = localStorage.getItem('AdminCredentials')
             const data = encryptData({
-                LoginToken: token
+                email: registerData?.email,
             })
             const params = {
                 url: "admin-resendMailOTP",
@@ -175,19 +174,19 @@ export default function OtpPage({
                 data: { data },
             };
             const response = await makeApiRequest(params);
+            const responseData = decryptData(response.data);
 
-
-            if (response.success) {
-                const responseData = response.data;
+            console.log('response :>> ', responseData);
+            if (responseData.status) {
 
                 const newToken = responseData?.token;
-
-                setRegisterData?.(
-                    (prev) => ({
-                        ...prev,
-                        token: newToken,
-                    })
+                console.log('newToken :>> ', newToken);
+                setRegisterData?.({
+                    email: registerData?.email,
+                    token: newToken,
+                }
                 );
+                console.log('registerData :>> ', registerData);
                 setOtp('');
                 setOtpExpired(false);
 
@@ -211,7 +210,7 @@ export default function OtpPage({
                 toast.success(responseData?.message || 'OTP resent successfully');
 
             } else {
-                toast.error(response.error);
+                toast.error(responseData.message);
             }
 
         } catch (error) {
@@ -290,7 +289,7 @@ export default function OtpPage({
                                                     resendLoading
                                                         ? 'Resending...'
                                                         : 'Resend OTP'
-                                                 }
+                                                }
                                             </button>
                                         )
                                     }
