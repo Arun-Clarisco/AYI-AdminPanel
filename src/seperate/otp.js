@@ -24,202 +24,253 @@ export default function OtpPage({
     const isLoginOtp = title === 'Login Verification';
     const navigate = useNavigate();
 
-    /* =========================================
-       START TIMER FROM JWT TOKEN
-    ========================================= */
-    useEffect(() => {
-        const token = localStorage.getItem('AdminCredentials');
-        const email = localStorage.getItem('email');
-        setRegisterData({ token: token, email: email })
-    }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("AdminCredentials");
+    const email = localStorage.getItem("email");
 
-    useEffect(() => {
+    setRegisterData({
+        token,
+        email,
+    });
+
+    if (token) {
         try {
+            const decoded = jwtDecode(token);
 
 
-            if (!registerData?.token) return;
-            // console.log('registerData.token :>> ', registerData?.token);
-            const decoded = jwtDecode(registerData?.token);
-            console.log('decoded :>> ', decoded);
-            const currentTime = Math.floor(Date.now() / 1000);
-            const timeLeft = decoded.exp - currentTime;
-            if (timeLeft > 0) {
-                setTimer(timeLeft);
-                setOtpExpired(false);
-            } else {
-                setTimer(0);
-                setOtpExpired(true);
+            // If already verified, redirect
+            if (!decoded?.status) {
+                navigate("/dashboard/user-list");
             }
         } catch (error) {
+            console.error("Invalid token:", error);
+            localStorage.removeItem("AdminCredentials");
+        }
+    }
+}, [navigate]);
+
+/* =========================================
+   INITIALIZE TIMER FROM TOKEN
+========================================= */
+
+useEffect(() => {
+    try {
+        if (!registerData?.token) return;
+
+        const decoded = jwtDecode(registerData.token);
+
+        const currentTime = Math.floor(Date.now() / 1000);
+        const timeLeft = decoded.exp - currentTime;
+
+        if (timeLeft > 0) {
+            setTimer(timeLeft);
+            setOtpExpired(false);
+        } else {
             setTimer(0);
             setOtpExpired(true);
         }
-    }, [registerData?.token]);
+    } catch (error) {
+        console.error(error);
+        setTimer(0);
+        setOtpExpired(true);
+    }
+}, [registerData?.token]);
 
-    /* =========================================
-       TIMER COUNTDOWN
-    ========================================= */
+/* =========================================
+   TIMER COUNTDOWN
+========================================= */
 
-    useEffect(() => {
-        let countdown;
-        if (timer > 0) {
-            countdown = setInterval(() => {
-                setTimer((prev) => {
-                    if (prev <= 1) {
-                        clearInterval(countdown);
-                        setOtpExpired(true);
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
+useEffect(() => {
+    if (timer <= 0) return;
+
+    const interval = setInterval(() => {
+        setTimer((prev) => {
+            if (prev <= 1) {
+                clearInterval(interval);
+                setOtpExpired(true);
+                return 0;
+            }
+            return prev - 1;
+        });
+    }, 1000);
+
+    return () => clearInterval(interval);
+}, [timer > 0]);
+
+/* =========================================
+   FORMAT TIMER
+========================================= */
+
+const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(
+        2,
+        "0"
+    )}`;
+};
+
+/* =========================================
+   VERIFY OTP
+========================================= */
+
+const handleVerifyOtp = async () => {
+    try {
+        if (!otp.trim()) {
+            toast.error("Enter OTP");
+            return;
         }
-        return () => {
-            if (countdown) {
-                clearInterval(countdown);
-            }
+
+        if (!/^\d{6}$/.test(otp)) {
+            toast.error("Enter valid 6 digit OTP");
+            return;
+        }
+
+        setLoading(true);
+
+        const payload = encryptData({
+            LoginToken: registerData?.token,
+            verifyOTP: otp,
+        });
+
+        const params = {
+            url: "admin-verifyLoginOTP",
+            method: "POST",
+            data: {
+                data: payload,
+            },
         };
-    }, [timer]);
 
-    /* =========================================
-       FORMAT TIMER
-    ========================================= */
+        const response = await makeApiRequest(params);
 
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    };
+        const responseData = decryptData(response.data);
 
-    /* =========================================
-       VERIFY OTP
-    ========================================= */
 
-    const handleVerifyOtp = async () => {
+        if (responseData?.status) {
+            toast.success(
+                responseData?.message || "OTP verified successfully"
+            );
 
-        try {
-            if (!otp.trim()) {
-                toast.error('Enter OTP');
-                return;
+            localStorage.setItem(
+                "AdminCredentials",
+                responseData.token
+            );
+
+            if (responseData?.email) {
+                localStorage.setItem("email", responseData.email);
             }
-            if (!/^\d{6}$/.test(otp)) {
-                toast.error('Enter valid 6 digit OTP');
-                return;
-            }
-            setLoading(true);
-            const token = localStorage.getItem('AdminCredentials')
-            setRegisterData({ token: token })
-            const data = encryptData({
-                LoginToken: token || registerData?.token,
-                verifyOTP: otp,
+
+            setRegisterData({
+                token: responseData.token,
+                email:
+                    responseData.email || registerData?.email,
             });
 
-            const params = {
-                url: "admin-verifyLoginOTP",
-                method: "POST",
-                data: { data },
-                data: { data },
-            };
-            const response = await makeApiRequest(params);
+            setOtpExpired(false);
 
-            const responseData = decryptData(response.data);
-            if (responseData.status) {
+                navigate("/dashboard/user-list");
+        } else {
+            toast.error(responseData?.message);
 
-
-                toast.success(responseData?.message || 'OTP verified successfully');
-                setOtpExpired(false);
-                localStorage.setItem("AdminCredentials", responseData.token);
-                setTimeout(() => {
-                    navigate("/dashboard/user-list");
-                }, 3000);
-
-                localStorage.setItem("AdminCredentials", responseData.token);
-                setTimeout(() => {
-                    navigate("/dashboard/user-list");
-                }, 3000);
-
-            } else {
-                toast.error(responseData.message);
-                if (
-                    response.message?.toLowerCase().includes('expired')
-                ) {
-                    setOtpExpired(true);
-                    setTimer(0);
-                }
+            if (
+                responseData?.message
+                    ?.toLowerCase()
+                    ?.includes("expired")
+            ) {
+                setOtpExpired(true);
+                setTimer(0);
             }
-
-        } catch (error) {
-            console.log(error);
-            toast.error('OTP verification failed');
-        } finally {
-            setLoading(false);
         }
-    };
+    } catch (error) {
+        console.error(error);
 
-    /* =========================================
-       RESEND OTP
-    ========================================= */
+        toast.error(
+            error?.response?.data?.message ||
+                "OTP verification failed"
+        );
+    } finally {
+        setLoading(false);
+    }
+};
 
-    const handleResendOtp = async () => {
+/* =========================================
+   RESEND OTP
+========================================= */
 
-        try {
+const handleResendOtp = async () => {
+    try {
+        setResendLoading(true);
 
-            setResendLoading(true);
-            const data = encryptData({
+        const payload = encryptData({
+            email: registerData?.email,
+        });
+
+        const params = {
+            url: "admin-resendMailOTP",
+            method: "POST",
+            data: {
+                data: payload,
+            },
+        };
+
+        const response = await makeApiRequest(params);
+
+        const responseData = decryptData(response.data);
+
+
+        if (responseData?.status) {
+            const newToken = responseData?.token;
+
+            localStorage.setItem(
+                "AdminCredentials",
+                newToken
+            );
+
+            setRegisterData({
                 email: registerData?.email,
-            })
-            const params = {
-                url: "admin-resendMailOTP",
-                method: "POST",
-                data: { data },
-            };
-            const response = await makeApiRequest(params);
-            const responseData = decryptData(response.data);
+                token: newToken,
+            });
 
-            console.log('response :>> ', responseData);
-            if (responseData.status) {
+            setOtp("");
+            setOtpExpired(false);
 
-                const newToken = responseData?.token;
-                console.log('newToken :>> ', newToken);
-                setRegisterData?.({
-                    email: registerData?.email,
-                    token: newToken,
-                }
+            try {
+                const decoded = jwtDecode(newToken);
+
+                const currentTime = Math.floor(
+                    Date.now() / 1000
                 );
-                console.log('registerData :>> ', registerData);
-                setOtp('');
-                setOtpExpired(false);
 
-                /* =========================
-                   RESTART TIMER
-                ========================= */
+                const timeLeft =
+                    decoded.exp - currentTime;
 
-                try {
+                setTimer(timeLeft > 0 ? timeLeft : 0);
+            } catch (err) {
+                console.error(err);
 
-                    const decoded = jwtDecode(newToken);
-
-                    const currentTime = Math.floor(Date.now() / 1000);
-
-                    const timeLeft = decoded.exp - currentTime;
-                    setTimer(timeLeft > 0 ? timeLeft : 0);
-
-                } catch (err) {
-                    setTimer(0);
-                    setOtpExpired(true);
-                }
-                toast.success(responseData?.message || 'OTP resent successfully');
-
-            } else {
-                toast.error(responseData.message);
+                setTimer(0);
+                setOtpExpired(true);
             }
 
-        } catch (error) {
-            console.log(error);
-            toast.error('Failed to resend OTP');
-        } finally {
-            setResendLoading(false);
+            toast.success(
+                responseData?.message ||
+                    "OTP resent successfully"
+            );
+        } else {
+            toast.error(responseData?.message);
         }
-    };
+    } catch (error) {
+        console.error(error);
+
+        toast.error(
+            error?.response?.data?.message ||
+                "Failed to resend OTP"
+        );
+    } finally {
+        setResendLoading(false);
+    }
+};
 
     return (
         <div className="container mx-auto">
@@ -307,7 +358,7 @@ export default function OtpPage({
                                         <ArrowRight size={16} className='ms-1' />
                                     </button>
                                     {/* <button
-                                        onClick={() => { navigate("/dashboard/user-list") }}
+                                        onClick={() => { navigate("/") }}
                                         className="w-full border-0 rounded"
                                         style={{padding:"10px 0px"}}
                                     >

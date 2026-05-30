@@ -8,7 +8,6 @@ export const makeApiRequest = async (params) => {
       headerContentType = "multipart/form-data"
     }
     let getToken = localStorage.getItem('AdminCredentials');
-    // console.log(getToken)
     const token = getToken != null ? getToken : "";
     const headers = {
       "Access-Control-Allow-Origin": "*",

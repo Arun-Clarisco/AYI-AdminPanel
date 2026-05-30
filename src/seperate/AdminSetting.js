@@ -72,32 +72,32 @@ function AdminSetting() {
 
   const handleNetworkChange = async (value) => {
     setNetwork(value);
-      try {
-        const provider = new ethers.JsonRpcProvider(
-          value === 'Ethereum'
-            ? config.RPC.Ethereum
-            : value === 'Arbitrum'
-              ? config.RPC.Arbitrum
-              : value === 'BNB'
-                ? config.RPC.BNB
-                : value === 'Polygon' ? config.RPC.Polygon : config.RPC.Base
-        );
-        const contract = config.FlashLoanContract[value.toString()];
-        const flashLoanContract = new ethers.Contract(contract, flashLoanAbi, provider);
-        const fee = await flashLoanContract.fee();
-        const feeEther = ethers.formatUnits(fee, 18);
-        setAdminFee(feeEther);
-      } catch (error) {
-        console.log(error)
-        setAdminFee("");
-      }
+    try {
+      const provider = new ethers.JsonRpcProvider(
+        value === 'Ethereum'
+          ? config.RPC.Ethereum
+          : value === 'Arbitrum'
+            ? config.RPC.Arbitrum
+            : value === 'BNB'
+              ? config.RPC.BNB
+              : value === 'Polygon' ? config.RPC.Polygon : config.RPC.Base
+      );
+      const contract = config.FlashLoanContract[value.toString()];
+      const flashLoanContract = new ethers.Contract(contract, flashLoanAbi, provider);
+      const fee = await flashLoanContract.fee();
+      const feeEther = ethers.formatUnits(fee, 18);
+      setAdminFee(feeEther);
+    } catch (error) {
+      console.log(error)
+      setAdminFee("");
+    }
   };
 
-  useEffect(()=>{
-    if(network){
+  useEffect(() => {
+    if (network) {
       handleNetworkChange(network)
     }
-  },[network])
+  }, [network])
 
   const submitAdminSetting = async (e) => {
     e.preventDefault();
@@ -110,47 +110,50 @@ function AdminSetting() {
 
     const contractStatus = await handleChangeFee(adminFee);
     if (contractStatus) {
-
-      try {
-        const encryptedData = encryptData({
-          network,
-          adminFee,
-        });
-        const params = {
-          url: "admin-setting",
-          method: "POST",
-          data: {
-            data: encryptedData,
-          },
-        };
-
-        const res = await makeApiRequest(params);
-        if (res.encryptedData) {
-          const decryptRes = decryptData(res.encryptedData);
-          if (decryptRes.status) {
-            toast.success(decryptRes.message || "Admin settings updated successfully");
-            // Update local state with new settings
-            const updatedNetworkFees = networkFees.filter(
-              (item) => item.network !== network
-            );
-            updatedNetworkFees.push({ network, adminFee });
-            setNetworkFees(updatedNetworkFees);
-          } else {
-            toast.error(decryptRes.message);
-          }
-        } else {
-          toast.error(res.message);
-        }
-
-      } catch (err) {
-        console.log("Error updating admin settings", err);
-      } finally {
-        setLoading(false);
-      }
+      toast.success("Admin settings updated successfully");
+      setLoading(false);
     } else {
       toast.error("Failed to update settings")
       setLoading(false);
     }
+
+    // try {
+    // const encryptedData = encryptData({
+    //   network,
+    //   adminFee,
+    // });
+    // const params = {
+    //   url: "admin-setting",
+    //   method: "POST",
+    //   data: {
+    //     data: encryptedData,
+    //   },
+    // };
+
+    // const res = await makeApiRequest(params);
+    // if (res.encryptedData) {
+    //   const decryptRes = decryptData(res.encryptedData);
+    //   if (decryptRes.status) {
+    // toast.success(decryptRes.message || "Admin settings updated successfully");
+    // Update local state with new settings
+    //       const updatedNetworkFees = networkFees.filter(
+    //         (item) => item.network !== network
+    //       );
+    //       updatedNetworkFees.push({ network, adminFee });
+    //       setNetworkFees(updatedNetworkFees);
+    //     } else {
+    //       toast.error(decryptRes.message);
+    //     }
+    //   } else {
+    //     toast.error(res.message);
+    //   }
+
+    // } catch (err) {
+    //   console.log("Error updating admin settings", err);
+    // } finally {
+    //   setLoading(false);
+    // }
+
   };
 
   const handleChangeFee = async (fee) => {

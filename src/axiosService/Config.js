@@ -3,8 +3,8 @@ let config = {};
 let environment = "local";
 if (environment == "local") {
   config = {
-    adminBackendUrl: "http://localhost:3012/ayi/admin/",
-    // adminBackendUrl: "https://api.ayibot92.tech/ayi/admin/",
+    // adminBackendUrl: "http://localhost:3012/ayi/admin/",
+    adminBackendUrl: "https://api.ayibot92.tech/ayi/admin/",
     SECURITY_KEY: "lDjIOueR98239842",
     Ethereum: 'https://etherscan.io/tx/',
     Arbitrum: 'https://arbiscan.io/tx/',
