@@ -22,6 +22,7 @@ export default function OtpPage({
     const [timer, setTimer] = useState(0);
     const [registerData, setRegisterData] = useState({});
     const isLoginOtp = title === 'Login Verification';
+    const [loginStatus, setLoginStatus] = useState(false);
     const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function OtpPage({
 useEffect(() => {
     try {
         if (!registerData?.token) return;
-
+        if(loginStatus) return
         const decoded = jwtDecode(registerData.token);
 
         const currentTime = Math.floor(Date.now() / 1000);
@@ -148,8 +149,9 @@ const handleVerifyOtp = async () => {
 
 
         if (responseData?.status) {
+            setLoginStatus(true);
             toast.success(
-                responseData?.message || "OTP verified successfully"
+                responseData?.message || "Admin login successfully!"
             );
 
             localStorage.setItem(
@@ -168,11 +170,12 @@ const handleVerifyOtp = async () => {
             });
 
             setOtpExpired(false);
-
+            setTimeout(()=> {
                 navigate("/dashboard/user-list");
+            },3000)
         } else {
             toast.error(responseData?.message);
-
+            setLoginStatus(false);
             if (
                 responseData?.message
                     ?.toLowerCase()
@@ -184,7 +187,7 @@ const handleVerifyOtp = async () => {
         }
     } catch (error) {
         console.error(error);
-
+        setLoginStatus(false);
         toast.error(
             error?.response?.data?.message ||
                 "OTP verification failed"
